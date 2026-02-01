@@ -55,11 +55,11 @@
   Images used:  SEPARATE hero images for the slideshow (you can use
                 different images from the product grid):
 
-    hero-0.png  →  Card 1 (Whitening cream)
-    hero-1.png  →  Card 2 (Shampoo & conditioner)
-    hero-2.png  →  Card 3 (Face cleanser)
-    hero-3.png  →  Card 4 (Body lotion)
-    hero-4.png  →  Card 5 (Kojic Acid face cream)
+    hero-0.png  →  Card 1 (Kojic acid serum)
+    hero-1.png  →  Card 2 (Skin texture change)
+    hero-2.png  →  Card 3 (shushi combo)
+    hero-3.png  →  Card 4 (Skin needs)
+    hero-4.png  →  Card 5 (Kojic Acid Facecream)
 
   The hero slideshow uses only hero-0.png … hero-4.png (no product-image
   fallback).
