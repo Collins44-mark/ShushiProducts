@@ -59,7 +59,7 @@
     hero-1.png  →  Card 2 (Skin texture change)
     hero-2.png  →  Card 3 (shushi combo)
     hero-3.png  →  Card 4 (Skin needs)
-    hero-4.png  →  Card 5 (Kojic Acid Facecream)
+    hero-4.png  →  Card 5 (Whitening cream)
 
   The hero slideshow uses only hero-0.png … hero-4.png (no product-image
   fallback).
