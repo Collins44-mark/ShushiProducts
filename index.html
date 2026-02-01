@@ -141,6 +141,8 @@
     #navMobileMenu.open { transform: translateX(0); }
     /* Drawer on right: default translate-x-full, open translateX(0) */
     body.menu-open { overflow: hidden; position: fixed; width: 100%; }
+    .cart-toast.toast-show { opacity: 1; }
+    .cart-toast.toast-hide { opacity: 0; }
 
     .screen { min-height: 100vh; display: block; }
     .screen.hidden { display: none !important; }
@@ -346,104 +348,44 @@
           <div class="product-carousel relative min-h-[340px] sm:min-h-[400px] md:min-h-[500px] flex items-center justify-center">
             <!-- Product Cards -->
             <div id="product0" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="0">
-              <div class="relative mb-4 rounded-2xl overflow-hidden bg-white">
-                <div class="shimmer absolute inset-0"></div>
-                <svg class="w-full h-44 sm:h-52 md:h-56 p-6 sm:p-8" viewBox="0 0 100 120">
-                  <defs>
-                    <linearGradient id="bottle1" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#fce7f3" />
-                      <stop offset="100%" stop-color="#fbcfe8" />
-                    </linearGradient>
-                  </defs>
-                  <rect x="35" y="10" width="30" height="15" rx="3" fill="#C86A8A" />
-                  <rect x="40" y="0" width="20" height="12" rx="2" fill="#f9a8d4" />
-                  <path d="M25 25 H75 L70 115 H30 Z" fill="url(#bottle1)" stroke="#f9a8d4" stroke-width="1" />
-                  <ellipse cx="50" cy="70" rx="15" ry="20" fill="#fdf2f8" opacity="0.5" />
-                </svg>
+              <div class="relative mb-4 rounded-2xl overflow-hidden bg-gray-50 aspect-square min-h-[176px] sm:min-h-[208px]">
+                <img src="images/product-0.png" alt="Whitening cream" class="product-img w-full h-full object-cover" onerror="this.style.display='none'">
               </div>
               <span class="text-xs font-medium tracking-wider uppercase">New Arrival</span>
-              <h3 class="font-display text-2xl font-semibold mt-2">Rose Elixir Serum</h3>
-              <p class="text-sm mt-2 text-gray-600">Hydrating • Anti-aging • Radiance</p>
+              <h3 class="font-display text-2xl font-semibold mt-2">Whitening cream</h3>
+              <p class="text-sm mt-2 text-gray-600">Brightening • Radiance • Even tone</p>
             </div>
             <div id="product1" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="1">
-              <div class="relative mb-4 rounded-2xl overflow-hidden bg-white">
-                <div class="shimmer absolute inset-0"></div>
-                <svg class="w-full h-44 sm:h-52 md:h-56 p-6 sm:p-8" viewBox="0 0 100 120">
-                  <defs>
-                    <linearGradient id="jar1" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#d1fae5" />
-                      <stop offset="100%" stop-color="#a7f3d0" />
-                    </linearGradient>
-                  </defs>
-                  <ellipse cx="50" cy="25" rx="35" ry="10" fill="#86efac" />
-                  <rect x="15" y="25" width="70" height="70" rx="10" fill="url(#jar1)" stroke="#86efac" stroke-width="1" />
-                  <ellipse cx="50" cy="95" rx="35" ry="8" fill="#86efac" opacity="0.5" />
-                  <ellipse cx="50" cy="60" rx="20" ry="15" fill="#f0fdf4" opacity="0.4" />
-                </svg>
+              <div class="relative mb-4 rounded-2xl overflow-hidden bg-gray-50 aspect-square min-h-[176px] sm:min-h-[208px]">
+                <img src="images/product-1.png" alt="Shampoo & conditioner" class="product-img w-full h-full object-cover" onerror="this.style.display='none'">
               </div>
               <span class="text-xs font-medium tracking-wider uppercase">Bestseller</span>
-              <h3 class="font-display text-2xl font-semibold mt-2">Green Tea Cream</h3>
-              <p class="text-sm mt-2 text-gray-600">Moisturizing • Soothing • Nourishing</p>
+              <h3 class="font-display text-2xl font-semibold mt-2">Shampoo & conditioner</h3>
+              <p class="text-sm mt-2 text-gray-600">Nourishing • Shine • All hair types</p>
             </div>
             <div id="product2" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="2">
-              <div class="relative mb-4 rounded-2xl overflow-hidden bg-white">
-                <div class="shimmer absolute inset-0"></div>
-                <svg class="w-full h-44 sm:h-52 md:h-56 p-6 sm:p-8" viewBox="0 0 100 120">
-                  <defs>
-                    <linearGradient id="dropper1" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#fef9c3" />
-                      <stop offset="100%" stop-color="#fde047" />
-                    </linearGradient>
-                  </defs>
-                  <rect x="42" y="0" width="16" height="25" rx="3" fill="#fbbf24" />
-                  <ellipse cx="50" cy="28" rx="12" ry="5" fill="#f59e0b" />
-                  <path d="M35 30 H65 L60 110 Q50 120 40 110 Z" fill="url(#dropper1)" stroke="#fde047" stroke-width="1" />
-                  <ellipse cx="50" cy="70" rx="8" ry="25" fill="#fffbeb" opacity="0.5" />
-                </svg>
+              <div class="relative mb-4 rounded-2xl overflow-hidden bg-gray-50 aspect-square min-h-[176px] sm:min-h-[208px]">
+                <img src="images/product-2.png" alt="Face cleanser" class="product-img w-full h-full object-cover" onerror="this.style.display='none'">
               </div>
               <span class="text-xs font-medium tracking-wider uppercase">Premium</span>
-              <h3 class="font-display text-2xl font-semibold mt-2">Vitamin C Drops</h3>
-              <p class="text-sm mt-2 text-gray-600">Brightening • Glow • Even Tone</p>
+              <h3 class="font-display text-2xl font-semibold mt-2">Face cleanser</h3>
+              <p class="text-sm mt-2 text-gray-600">Gentle • Deep clean • Balanced</p>
             </div>
             <div id="product3" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="3">
-              <div class="relative mb-4 rounded-2xl overflow-hidden bg-white">
-                <div class="shimmer absolute inset-0"></div>
-                <svg class="w-full h-44 sm:h-52 md:h-56 p-6 sm:p-8" viewBox="0 0 100 120">
-                  <defs>
-                    <linearGradient id="tube1" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#e9d5ff" />
-                      <stop offset="100%" stop-color="#d8b4fe" />
-                    </linearGradient>
-                  </defs>
-                  <rect x="35" y="0" width="30" height="20" rx="5" fill="#a78bfa" />
-                  <path d="M30 20 H70 V100 Q50 115 30 100 Z" fill="url(#tube1)" stroke="#c4b5fd" stroke-width="1" />
-                  <rect x="30" y="35" width="40" height="3" fill="#a78bfa" opacity="0.5" />
-                  <rect x="30" y="42" width="40" height="3" fill="#a78bfa" opacity="0.3" />
-                </svg>
+              <div class="relative mb-4 rounded-2xl overflow-hidden bg-gray-50 aspect-square min-h-[176px] sm:min-h-[208px]">
+                <img src="images/product-3.png" alt="Body lotion" class="product-img w-full h-full object-cover" onerror="this.style.display='none'">
               </div>
               <span class="text-xs font-medium tracking-wider uppercase">Featured</span>
-              <h3 class="font-display text-2xl font-semibold mt-2">Lavender Cleanser</h3>
-              <p class="text-sm mt-2 text-gray-600">Gentle • Calming • Deep Clean</p>
+              <h3 class="font-display text-2xl font-semibold mt-2">Body lotion</h3>
+              <p class="text-sm mt-2 text-gray-600">Moisturizing • Soft • Non-greasy</p>
             </div>
             <div id="product4" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="4">
-              <div class="relative mb-4 rounded-2xl overflow-hidden bg-white">
-                <div class="shimmer absolute inset-0"></div>
-                <svg class="w-full h-44 sm:h-52 md:h-56 p-6 sm:p-8" viewBox="0 0 100 120">
-                  <defs>
-                    <linearGradient id="mist1" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#fecdd3" />
-                      <stop offset="100%" stop-color="#fda4af" />
-                    </linearGradient>
-                  </defs>
-                  <rect x="38" y="0" width="24" height="18" rx="4" fill="#fb7185" />
-                  <ellipse cx="50" cy="20" rx="18" ry="6" fill="#f43f5e" />
-                  <rect x="28" y="25" width="44" height="85" rx="8" fill="url(#mist1)" stroke="#fecdd3" stroke-width="1" />
-                  <ellipse cx="50" cy="65" rx="12" ry="25" fill="#fff1f2" opacity="0.4" />
-                </svg>
+              <div class="relative mb-4 rounded-2xl overflow-hidden bg-gray-50 aspect-square min-h-[176px] sm:min-h-[208px]">
+                <img src="images/product-4.png" alt="Kojic Acid face cream" class="product-img w-full h-full object-cover" onerror="this.style.display='none'">
               </div>
               <span class="text-xs font-medium tracking-wider uppercase">Popular</span>
-              <h3 class="font-display text-2xl font-semibold mt-2">Rose Mist Toner</h3>
-              <p class="text-sm mt-2 text-gray-600">Refreshing • Balancing • Hydrating</p>
+              <h3 class="font-display text-2xl font-semibold mt-2">Kojic Acid face cream</h3>
+              <p class="text-sm mt-2 text-gray-600">Brightening • Dark spots • Gentle</p>
             </div>
           </div>
           <!-- Carousel Controls: arrows only -->
@@ -569,21 +511,21 @@
         </div>
       </div>
       <footer class="collections-contact border-t border-gray-200 bg-white py-10 sm:py-14 px-4 sm:px-6 pb-[env(safe-area-inset-bottom)]">
-        <div class="max-w-6xl mx-auto">
+        <div class="max-w-2xl mx-auto">
           <h3 class="font-display text-lg font-semibold text-[#C86A8A] text-center mb-6">Contact</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-center sm:text-left">
-            <a href="mailto:shushiproduct@gmail.com" class="flex flex-col sm:flex-row items-center gap-2 text-gray-600 hover:text-[#C86A8A] transition-colors">
-              <svg class="w-5 h-5 text-[#C86A8A] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-              <span class="text-sm break-all">shushiproduct@gmail.com</span>
-            </a>
-            <a href="tel:+255742717777" class="flex flex-col sm:flex-row items-center gap-2 text-gray-600 hover:text-[#C86A8A] transition-colors">
-              <svg class="w-5 h-5 text-[#C86A8A] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-              <span class="text-sm">+255 742 717 777</span>
-            </a>
-            <p class="flex flex-col sm:flex-row items-center gap-2 text-gray-600">
-              <svg class="w-5 h-5 text-[#C86A8A] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              <span class="text-sm">Dar es Salaam, Tanzania</span>
-            </p>
+          <div class="space-y-4">
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+              <span class="text-sm font-semibold text-[#C86A8A] w-16 sm:w-20 shrink-0">Email</span>
+              <a href="mailto:shushiproduct@gmail.com" class="text-sm text-gray-600 hover:text-[#C86A8A] transition-colors break-all">shushiproduct@gmail.com</a>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+              <span class="text-sm font-semibold text-[#C86A8A] w-16 sm:w-20 shrink-0">Phone</span>
+              <a href="tel:+255742717777" class="text-sm text-gray-600 hover:text-[#C86A8A] transition-colors">+255 742 717 777</a>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+              <span class="text-sm font-semibold text-[#C86A8A] w-16 sm:w-20 shrink-0">Address</span>
+              <span class="text-sm text-gray-600">Dar es Salaam, Tanzania</span>
+            </div>
           </div>
           <p class="text-center text-xs text-gray-500 mt-8">© 2025 Shushi Products</p>
         </div>
@@ -630,6 +572,9 @@
       </div>
     </div>
 
+    <!-- Toast: added to cart notification -->
+    <div id="cartToast" class="cart-toast fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-3 rounded-xl bg-[#C86A8A] text-white text-sm font-medium shadow-lg z-[70] opacity-0 pointer-events-none transition-opacity duration-300 toast-hide">Added to cart</div>
+
     <!-- Cart Drawer (outside screens so it opens from any page) -->
     <div id="cartOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300"></div>
     <aside id="cartDrawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col transform translate-x-full transition-transform duration-300 ease-out max-h-[100dvh] max-h-[100vh]">
@@ -653,12 +598,12 @@
     const PRIMARY = '#C86A8A';
 
     const products = [
-      { name: 'Rose Elixir Serum', capacity: '30ml', price: 'TSh 250,000', priceValue: 250000, category: 'serum', description: 'Our signature Rose Elixir Serum combines advanced hydrating technology with the essence of pure rose extract. This luxurious formula penetrates deep into the skin to deliver intense moisture while fighting signs of aging. Perfect for daily use on all skin types.', benefits: ['Deep hydration for up to 24 hours', 'Reduces fine lines and wrinkles', 'Improves skin elasticity and firmness', 'Natural rose extract for radiance'], howTo: 'Apply 2-3 drops to clean, dry face morning and evening. Gently massage in upward circular motions until fully absorbed. Follow with your favorite moisturizer.', imageClass: 'from-pink-50 to-pink-100', svg: `<svg class="w-full h-64 p-12" viewBox="0 0 100 120"><defs><linearGradient id="p1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fce7f3"/><stop offset="100%" stop-color="#fbcfe8"/></linearGradient></defs><rect x="35" y="10" width="30" height="15" rx="3" fill="#C86A8A"/><rect x="40" y="0" width="20" height="12" rx="2" fill="#f9a8d4"/><path d="M25 25 H75 L70 115 H30 Z" fill="url(#p1)" stroke="#f9a8d4" stroke-width="1"/><ellipse cx="50" cy="70" rx="15" ry="20" fill="#fdf2f8" opacity="0.5"/></svg>` },
-      { name: 'Green Tea Cream', capacity: '50ml', price: 'TSh 185,000', priceValue: 185000, category: 'cream', description: 'Infused with antioxidant-rich green tea extract, this nourishing cream provides deep moisturization while protecting your skin from environmental stressors. Its lightweight formula absorbs quickly, leaving skin soft and supple without greasiness.', benefits: ['Powerful antioxidant protection', 'Soothes irritated skin', 'Lightweight, non-greasy formula', 'Suitable for sensitive skin'], howTo: 'Apply a generous amount to face and neck after cleansing and toning. Massage gently until absorbed. Use morning and night for best results.', imageClass: 'from-green-50 to-green-100', svg: `<svg class="w-full h-64 p-12" viewBox="0 0 100 120"><defs><linearGradient id="p2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#d1fae5"/><stop offset="100%" stop-color="#a7f3d0"/></linearGradient></defs><ellipse cx="50" cy="25" rx="35" ry="10" fill="#86efac"/><rect x="15" y="25" width="70" height="70" rx="10" fill="url(#p2)" stroke="#86efac" stroke-width="1"/><ellipse cx="50" cy="95" rx="35" ry="8" fill="#86efac" opacity="0.5"/><ellipse cx="50" cy="60" rx="20" ry="15" fill="#f0fdf4" opacity="0.4"/></svg>` },
-      { name: 'Vitamin C Drops', capacity: '30ml', price: 'TSh 215,000', priceValue: 215000, category: 'serum', description: 'This concentrated Vitamin C serum brightens dull skin and evens out skin tone for a radiant, luminous complexion. The stable formula delivers powerful antioxidants to protect against free radicals and boost collagen production.', benefits: ['Brightens and evens skin tone', 'Boosts natural collagen production', 'Protects against environmental damage', 'Reduces dark spots and hyperpigmentation'], howTo: 'Apply 3-4 drops to clean skin before moisturizer. Use in the morning for daytime protection. May cause slight tingling - this is normal. Always use SPF during the day.', imageClass: 'from-yellow-50 to-yellow-200', svg: `<svg class="w-full h-64 p-12" viewBox="0 0 100 120"><defs><linearGradient id="p3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef9c3"/><stop offset="100%" stop-color="#fde047"/></linearGradient></defs><rect x="42" y="0" width="16" height="25" rx="3" fill="#fbbf24"/><ellipse cx="50" cy="28" rx="12" ry="5" fill="#f59e0b"/><path d="M35 30 H65 L60 110 Q50 120 40 110 Z" fill="url(#p3)" stroke="#fde047" stroke-width="1"/><ellipse cx="50" cy="70" rx="8" ry="25" fill="#fffbeb" opacity="0.5"/></svg>` },
-      { name: 'Lavender Cleanser', capacity: '150ml', price: 'TSh 125,000', priceValue: 125000, category: 'cleanser', description: 'Begin your skincare routine with our gentle Lavender Cleanser. Enriched with calming lavender essential oil, this creamy cleanser removes impurities and makeup while maintaining your skin\'s natural moisture balance.', benefits: ['Gentle daily cleansing', 'Calms and soothes skin', 'Removes makeup and impurities', 'Maintains skin\'s pH balance'], howTo: 'Wet face with lukewarm water. Apply a small amount and massage in circular motions for 30-60 seconds. Rinse thoroughly and pat dry. Use morning and evening.', imageClass: 'from-violet-100 to-violet-200', svg: `<svg class="w-full h-64 p-12" viewBox="0 0 100 120"><defs><linearGradient id="p4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e9d5ff"/><stop offset="100%" stop-color="#d8b4fe"/></linearGradient></defs><rect x="35" y="0" width="30" height="20" rx="5" fill="#a78bfa"/><path d="M30 20 H70 V100 Q50 115 30 100 Z" fill="url(#p4)" stroke="#c4b5fd" stroke-width="1"/><rect x="30" y="35" width="40" height="3" fill="#a78bfa" opacity="0.5"/><rect x="30" y="42" width="40" height="3" fill="#a78bfa" opacity="0.3"/></svg>` },
-      { name: 'Rose Mist Toner', capacity: '100ml', price: 'TSh 95,000', priceValue: 95000, category: 'toner', description: 'Refresh and revitalize your skin with our Rose Mist Toner. This hydrating facial mist balances skin pH, tightens pores, and provides an instant boost of hydration. Perfect for use throughout the day for a quick refresh.', benefits: ['Balances skin pH levels', 'Hydrates and refreshes instantly', 'Tightens and minimizes pores', 'Sets makeup beautifully'], howTo: 'Hold bottle 8-10 inches from face and mist evenly. Use after cleansing or anytime skin needs refreshing. Can be used over makeup. Allow to air dry or gently pat in.', imageClass: 'from-rose-50 to-rose-200', svg: `<svg class="w-full h-64 p-12" viewBox="0 0 100 120"><defs><linearGradient id="p5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fecdd3"/><stop offset="100%" stop-color="#fda4af"/></linearGradient></defs><rect x="38" y="0" width="24" height="18" rx="4" fill="#fb7185"/><ellipse cx="50" cy="20" rx="18" ry="6" fill="#f43f5e"/><rect x="28" y="25" width="44" height="85" rx="8" fill="url(#p5)" stroke="#fecdd3" stroke-width="1"/><ellipse cx="50" cy="65" rx="12" ry="25" fill="#fff1f2" opacity="0.4"/></svg>` },
-      { name: 'Honey Glow Mask', capacity: '75ml', price: 'TSh 165,000', priceValue: 165000, category: 'mask', description: 'Treat your skin to our intensive Honey Glow Mask. Formulated with natural honey and nourishing botanicals, this weekly treatment deeply hydrates and illuminates skin for a healthy, glowing complexion.', benefits: ['Intensive weekly hydration treatment', 'Natural honey for antibacterial benefits', 'Illuminates and brightens complexion', 'Softens and smooths skin texture'], howTo: 'Apply a generous layer to clean, dry face avoiding eye area. Leave on for 15-20 minutes. Rinse with warm water and pat dry. Use 2-3 times weekly for best results.', imageClass: 'from-amber-50 to-amber-100', svg: `<svg class="w-full h-64 p-12" viewBox="0 0 100 120"><defs><linearGradient id="p6" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef3c7"/><stop offset="100%" stop-color="#fcd34d"/></linearGradient></defs><ellipse cx="50" cy="20" rx="28" ry="8" fill="#fbbf24"/><rect x="22" y="20" width="56" height="85" rx="8" fill="url(#p6)" stroke="#fcd34d" stroke-width="1"/><ellipse cx="50" cy="105" rx="28" ry="8" fill="#fbbf24" opacity="0.6"/><circle cx="50" cy="60" r="15" fill="#fef3c7" opacity="0.5"/></svg>` }
+      { name: 'Whitening cream', capacity: '30ml', price: 'TSh 250,000', priceValue: 250000, category: 'cream', description: 'Our signature Whitening cream combines advanced brightening technology with nourishing ingredients. This luxurious formula penetrates deep into the skin to deliver an even, radiant complexion. Perfect for daily use on all skin types.', benefits: ['Brightens and evens skin tone', 'Reduces dark spots', 'Improves skin radiance', 'Nourishing formula'], howTo: 'Apply to clean, dry face morning and evening. Gently massage in upward motions until absorbed. Follow with sunscreen during the day.', imageClass: 'from-pink-50 to-pink-100', svg: `` },
+      { name: 'Shampoo & conditioner', capacity: '250ml', price: 'TSh 185,000', priceValue: 185000, category: 'hair', description: 'Infused with nourishing ingredients, this shampoo and conditioner duo strengthens hair and adds shine. Suitable for all hair types.', benefits: ['Strengthens hair', 'Adds shine', 'Nourishing formula', 'Suitable for all hair types'], howTo: 'Apply shampoo to wet hair, massage, rinse. Follow with conditioner, leave for 2-3 minutes, then rinse.', imageClass: 'from-green-50 to-green-100', svg: `` },
+      { name: 'Face cleanser', capacity: '150ml', price: 'TSh 215,000', priceValue: 215000, category: 'cleanser', description: 'Gentle face cleanser that removes impurities and makeup while maintaining your skin\'s natural balance. Perfect for daily use.', benefits: ['Deep cleansing', 'Removes makeup', 'Gentle formula', 'Balances skin'], howTo: 'Wet face with lukewarm water. Apply a small amount and massage in circular motions. Rinse thoroughly and pat dry.', imageClass: 'from-yellow-50 to-yellow-200', svg: `` },
+      { name: 'Body lotion', capacity: '200ml', price: 'TSh 125,000', priceValue: 125000, category: 'lotion', description: 'Nourishing body lotion that moisturizes and softens skin. Absorbs quickly without greasiness.', benefits: ['Deep moisturization', 'Softens skin', 'Non-greasy', 'Long-lasting'], howTo: 'Apply to body after shower or as needed. Massage until absorbed.', imageClass: 'from-violet-100 to-violet-200', svg: `` },
+      { name: 'Kojic Acid face cream', capacity: '50ml', price: 'TSh 95,000', priceValue: 95000, category: 'cream', description: 'Kojic Acid face cream helps brighten skin and reduce the appearance of dark spots. Gentle yet effective formula.', benefits: ['Brightens complexion', 'Reduces dark spots', 'Gentle formula', 'Suitable for all skin types'], howTo: 'Apply to clean, dry face morning and evening. Use sunscreen during the day.', imageClass: 'from-rose-50 to-rose-200', svg: `` },
+      { name: 'Body oil', capacity: '100ml', price: 'TSh 165,000', priceValue: 165000, category: 'oil', description: 'Nourishing body oil that leaves skin soft and glowing. Can be used alone or mixed with lotion.', benefits: ['Nourishing', 'Adds glow', 'Non-greasy absorption', 'Versatile use'], howTo: 'Apply a few drops to damp skin after shower. Massage in until absorbed.', imageClass: 'from-amber-50 to-amber-100', svg: `` }
     ];
 
     const collections = [
@@ -1019,7 +964,6 @@
           <span class="text-sm text-gray-600">${b}</span>
         </li>
       `).join('');
-      const detailSvg = product.svg.replace(/id="(p\d+)"/g, 'id="detail-$1"').replace(/url\(#(p\d+)\)/g, 'url(#detail-$1)');
       const detailEl = document.getElementById('detailImage');
       detailEl.innerHTML = '<div class="absolute inset-0 product-img-box">' + productImageHtml(productIndex, product.name) + '</div>';
       document.getElementById('detailAddToCart').onclick = () => addToCart(productIndex);
@@ -1142,14 +1086,27 @@
       });
     }
 
+    function showToast(message) {
+      const toast = document.getElementById('cartToast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.remove('toast-hide');
+      toast.classList.add('toast-show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => {
+        toast.classList.remove('toast-show');
+        toast.classList.add('toast-hide');
+      }, 2800);
+    }
     function addToCart(productIndex) {
       cart.push({ productIndex, qty: 1 });
       document.getElementById('cartCount').textContent = cart.reduce((s, { qty }) => s + qty, 0);
+      showToast(products[productIndex].name + ' added to cart');
     }
-
     function addCollectionToCart(collectionIndex) {
       cart.push({ collectionIndex, qty: 1 });
       document.getElementById('cartCount').textContent = cart.reduce((s, { qty }) => s + qty, 0);
+      showToast(collections[collectionIndex].name + ' set added to cart');
     }
 
     function updateCartQty(productIndex, delta) {
@@ -1301,5 +1258,8 @@
       if (closeBtn) closeBtn.addEventListener('click', closeNavMobileMenu);
     })();
   </script>
+</body>
+</html>
+
 </body>
 </html>
