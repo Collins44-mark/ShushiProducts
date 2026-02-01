@@ -61,8 +61,8 @@
     hero-3.png  →  Card 4 (Body lotion)
     hero-4.png  →  Card 5 (Kojic Acid face cream)
 
-  If hero-0.png … hero-4.png are missing, the carousel falls back to
-  product-0.png … product-4.png automatically.
+  The hero slideshow uses only hero-0.png … hero-4.png (no product-image
+  fallback).
 
   How to update:  Add or replace hero-0.png … hero-4.png in this folder
   with the images you want for the home-page slideshow. Refresh the page
@@ -99,8 +99,8 @@
     product-0.png … product-5.png   (required for product grid, detail, cart)
     hero-0.png … hero-4.png         (optional; for home-page slideshow only)
 
-  If hero-0.png … hero-4.png are present, they are used in the home-page
-  carousel. If not, product-0.png … product-4.png are used there.
+  The home-page hero carousel uses hero-0.png … hero-4.png only (no
+  product-image fallback).
 
   • No spaces in filenames (avoid " product-0.png" with a leading space).
   • Use lowercase. Format: .png or .jpg for products.
