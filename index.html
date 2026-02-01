@@ -139,7 +139,8 @@
     #cartOverlay.open { opacity: 1; pointer-events: auto; }
     #searchPanel.open { display: block !important; }
     #navMenuOverlay.open { opacity: 1; pointer-events: auto; }
-    #searchOverlay.open { opacity: 1; pointer-events: auto; }
+    #navMobileMenu.open { transform: translateX(0); }
+    #searchBarRow.open { display: block !important; }
 
     .screen { min-height: 100vh; display: block; }
     .screen.hidden { display: none !important; }
@@ -177,6 +178,7 @@
       pointer-events: auto;
     }
     .set-slide-card.details-open .set-slide-details-panel { transform: translateX(0); }
+    .set-slide-card.details-open .set-slide-details-tab { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.2s, visibility 0.2s; }
     .set-slide-details-panel .close-btn {
       position: absolute; top: 0.5rem; left: 0.5rem;
       width: 32px; height: 32px; border-radius: 50%; border: none;
@@ -231,9 +233,9 @@
     @media (max-width: 768px) {
       input[type="search"], input[type="text"], input[type="email"] { font-size: 16px !important; }
     }
-    /* Mobile: search panel full-width and well-sized */
-    @media (max-width: 640px) {
-      .search-panel { left: 1rem; right: 1rem; width: auto !important; max-width: none !important; min-width: 0; padding: 1rem; }
+    /* Mobile: desktop search panel hidden (use inline search bar below nav) */
+    @media (max-width: 767px) {
+      #searchPanel { display: none !important; }
     }
     /* Mobile: product detail — card-like contained layout, prominent Add to Cart */
     @media (max-width: 768px) {
@@ -273,13 +275,14 @@
             <button type="button" data-screen="home" data-scroll="footer" class="nav-link text-sm font-medium tracking-wide text-gray-600 bg-transparent border-none cursor-pointer">Contact</button>
           </div>
           <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-            <div class="relative">
+            <div class="relative flex items-center">
               <button type="button" id="searchToggle" class="p-2.5 sm:p-2 rounded-full hover:bg-white/30 transition-colors text-[#C86A8A] touch-manipulation" aria-label="Search">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
-              <div id="searchPanel" class="search-panel absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] min-w-[280px] max-w-[20rem] sm:w-72 sm:min-w-0 md:w-96 glass-strong rounded-2xl p-3 sm:p-3 shadow-xl hidden z-50 max-h-[85vh] flex flex-col">
+              <!-- Desktop: dropdown search panel -->
+              <div id="searchPanel" class="search-panel absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] min-w-[280px] max-w-[20rem] sm:w-72 sm:min-w-0 md:w-96 glass-strong rounded-2xl p-3 shadow-xl hidden z-50 max-h-[85vh] flex flex-col md:block">
                 <input type="search" id="searchInput" placeholder="Search products…" class="w-full px-4 py-3 sm:py-2 rounded-xl border border-[#C86A8A]/30 bg-white/80 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C86A8A]/50 text-base flex-shrink-0" />
                 <div id="searchResults" class="mt-2 max-h-[50vh] sm:max-h-64 overflow-y-auto flex-1 min-h-0"></div>
               </div>
@@ -296,20 +299,31 @@
             </button>
           </div>
         </div>
-        <div id="navMobileMenu" class="md:hidden hidden absolute left-0 right-0 top-full mt-0 glass-strong border-t border-white/30 shadow-xl rounded-b-2xl overflow-hidden z-50">
-          <div class="px-4 py-4 flex flex-col gap-1">
-            <button type="button" data-screen="home" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-white/40 text-[#C86A8A]">Shop</button>
-            <button type="button" data-screen="collections" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-white/40 text-[#C86A8A]">Collections</button>
-            <button type="button" data-screen="home" data-scroll="about" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-white/40 text-[#C86A8A]">About</button>
-            <button type="button" data-screen="home" data-scroll="footer" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-white/40 text-[#C86A8A]">Contact</button>
+        <!-- Mobile: inline search row below nav bar (shown when search toggled) -->
+        <div id="searchBarRow" class="md:hidden hidden w-full mt-2 pt-2 border-t border-white/30">
+          <div class="flex flex-col gap-2">
+            <input type="search" id="searchInputMobile" placeholder="Search products…" class="nav-search-inline w-full px-4 py-2.5 rounded-xl border border-[#C86A8A]/30 bg-white/90 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C86A8A]/50 text-base" />
+            <div id="searchResultsMobile" class="max-h-[40vh] overflow-y-auto rounded-xl bg-white/95 p-2"></div>
           </div>
         </div>
       </div>
     </nav>
-    <!-- Mobile menu backdrop: dims background when menu is open -->
+    <!-- Mobile menu: slide-in drawer from left -->
     <div id="navMenuOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300 md:hidden" aria-hidden="true"></div>
-    <!-- Search backdrop: dims background when search is open on mobile -->
-    <div id="searchOverlay" class="fixed inset-0 bg-black/40 z-[45] opacity-0 pointer-events-none transition-opacity duration-300 sm:hidden" aria-hidden="true"></div>
+    <aside id="navMobileMenu" class="nav-drawer fixed top-0 left-0 h-full w-[min(280px,85vw)] max-w-[280px] bg-white/98 backdrop-blur-md shadow-2xl z-50 flex flex-col transform -translate-x-full transition-transform duration-300 ease-out md:hidden pt-[env(safe-area-inset-top)]">
+      <div class="flex items-center justify-between p-4 border-b border-gray-200">
+        <span class="font-display text-lg font-semibold text-[#C86A8A]">Menu</span>
+        <button type="button" id="navMenuClose" class="p-2 rounded-full hover:bg-gray-100 text-gray-600" aria-label="Close menu">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="flex-1 overflow-y-auto px-2 py-4 flex flex-col gap-1">
+        <button type="button" data-screen="home" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-pink-50 text-[#C86A8A]">Shop</button>
+        <button type="button" data-screen="collections" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-pink-50 text-[#C86A8A]">Collections</button>
+        <button type="button" data-screen="home" data-scroll="about" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-pink-50 text-[#C86A8A]">About</button>
+        <button type="button" data-screen="home" data-scroll="footer" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-pink-50 text-[#C86A8A]">Contact</button>
+      </div>
+    </aside>
 
     <!-- HOME SCREEN -->
     <div id="screenHome" class="screen">
@@ -535,6 +549,7 @@
     <div id="screenCollections" class="screen hidden min-h-screen bg-gray-50">
       <div class="pt-20 sm:pt-24 pb-10 sm:pb-16 px-3 sm:px-6">
         <div class="max-w-6xl mx-auto">
+          <h2 class="collections-title text-center text-lg sm:text-xl font-display font-semibold text-[#C86A8A] mb-6 sm:mb-8 tracking-wide">Combo set skin collection</h2>
           <div id="collectionsScreenContent">
             <!-- Filled by JS: each set has a slider of product images with labels -->
           </div>
@@ -570,7 +585,7 @@
           </div>
           <div class="border-t border-gray-200 pt-8 sm:pt-12">
             <h2 class="font-display text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-[#C86A8A]">Similar products</h2>
-            <div id="similarProducts" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
+            <div id="similarProducts" class="grid grid-cols-2 gap-4 sm:gap-6"></div>
           </div>
         </div>
       </div>
@@ -665,16 +680,21 @@
           <div class="p-3 sm:p-4 md:p-5 flex-1 flex flex-col min-w-0">
             <h3 class="font-display text-sm sm:text-base md:text-lg font-semibold mb-1 sm:mb-2 text-[#C86A8A] line-clamp-2">${p.name}</h3>
             <p class="text-xs text-gray-600 line-clamp-2 mb-2 sm:mb-3 flex-1">${p.description.slice(0, 80)}…</p>
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 mt-auto">
+            <div class="flex flex-col gap-2 mt-auto">
               <span class="font-semibold text-base sm:text-lg md:text-xl text-[#C86A8A]">${p.price}</span>
-              <button type="button" class="px-3 py-2 rounded-full text-white text-xs sm:text-sm font-medium transition-all hover:scale-105 active:scale-95 bg-[#C86A8A] view-details-btn touch-manipulation w-full sm:w-auto shrink-0">View Details</button>
+              <button type="button" class="shop-add-btn w-full py-2.5 rounded-lg text-sm font-bold uppercase tracking-wide transition-all hover:opacity-90 active:scale-[0.98] touch-manipulation border-2 border-emerald-500 bg-[#26262a] text-emerald-400" data-product="${i}">ADD</button>
             </div>
           </div>
         </div>
       `;
       }).join('') : '<p class="col-span-full text-center text-gray-500 py-8">No products match your search.</p>';
       document.querySelectorAll('.product-item').forEach(el => {
-        el.addEventListener('click', () => showProductDetail(parseInt(el.dataset.product)));
+        el.addEventListener('click', e => {
+          if (!e.target.closest('.shop-add-btn')) showProductDetail(parseInt(el.dataset.product));
+        });
+      });
+      document.querySelectorAll('.shop-add-btn').forEach(btn => {
+        btn.addEventListener('click', e => { e.stopPropagation(); addToCart(parseInt(btn.dataset.product)); });
       });
     }
 
@@ -684,7 +704,7 @@
       const overlay = document.getElementById('navMenuOverlay');
       const icon = toggle && toggle.querySelector('.nav-menu-icon');
       const closeIcon = toggle && toggle.querySelector('.nav-menu-close');
-      if (menu) menu.classList.add('hidden');
+      if (menu) menu.classList.remove('open');
       if (toggle) toggle.setAttribute('aria-expanded', 'false');
       if (overlay) overlay.classList.remove('open');
       if (icon) icon.classList.remove('hidden');
@@ -693,6 +713,7 @@
 
     function showScreen(screen, productIndex, fromHistory) {
       closeNavMobileMenu();
+      if (setCarouselAutoInterval) { clearInterval(setCarouselAutoInterval); setCarouselAutoInterval = null; }
       document.getElementById('screenHome').classList.add('hidden');
       document.getElementById('screenCollections').classList.add('hidden');
       document.getElementById('screenProduct').classList.add('hidden');
@@ -735,6 +756,7 @@
     }
 
     let setCarouselIndex = {}; // { collectionIndex: slideIndex }
+    let setCarouselAutoInterval = null;
 
     function renderCollectionsScreen() {
       const container = document.getElementById('collectionsScreenContent');
@@ -765,6 +787,7 @@
           </div>
           `;
         }).join('');
+        const itemsListHtml = '<ul class="collection-items-list list-none p-0 m-0 space-y-1.5 text-xs sm:text-sm text-gray-600 mb-2">' + items.map(p => `<li class="flex items-center gap-1.5"><span class="text-[#C86A8A]">•</span>${p.name}</li>`).join('') + '</ul>';
         return `
         <div class="bg-white rounded-xl overflow-hidden product-box-shadow border border-gray-100 flex flex-col" data-collection="${ci}">
           <div class="set-carousel-view relative overflow-hidden bg-gray-50 cursor-grab active:cursor-grabbing flex-shrink-0 rounded-t-xl" data-set="${ci}">
@@ -773,9 +796,9 @@
             </div>
           </div>
           <div class="p-3 sm:p-4 md:p-5 flex-1 flex flex-col min-w-0">
-            <h3 class="font-display text-sm sm:text-base md:text-lg font-semibold mb-1 text-[#C86A8A] line-clamp-2">${col.name}</h3>
+            <h3 class="font-display text-sm sm:text-base md:text-lg font-semibold mb-1.5 text-[#C86A8A]">${col.name}</h3>
+            ${itemsListHtml}
             <p class="text-xs text-gray-600 mb-1 sm:mb-2 line-clamp-2 flex-1">${col.description}</p>
-            <p class="text-[10px] sm:text-xs text-gray-500 mb-2 mt-auto truncate" title="${items.map(p => p.name).join(', ')}">${items.length} items</p>
             <div class="flex items-center justify-between gap-2 mt-1 sm:mt-2">
               <span class="font-semibold text-sm sm:text-base text-[#C86A8A]">${totalFormatted}</span>
               <span class="text-[10px] sm:text-xs text-gray-500 shrink-0">${items.length} pcs</span>
@@ -807,6 +830,10 @@
       });
       setCarouselTouch(container);
       setCarouselMouse(container);
+      if (setCarouselAutoInterval) clearInterval(setCarouselAutoInterval);
+      setCarouselAutoInterval = setInterval(() => {
+        collections.forEach((_, ci) => moveSetCarousel(ci, 1));
+      }, 4000);
     }
 
     function moveSetCarousel(ci, delta) {
@@ -965,7 +992,7 @@
           <div class="p-4">
             <h4 class="font-display font-semibold text-[#C86A8A]">${p.name}</h4>
             <p class="text-sm text-gray-600">${p.price}</p>
-            <button type="button" class="mt-2 w-full py-2 rounded-full text-white text-sm bg-[#C86A8A] similar-add" data-product="${i}">Add to cart</button>
+            <button type="button" class="mt-2 w-full py-2.5 rounded-lg text-sm font-bold uppercase tracking-wide border-2 border-emerald-500 bg-[#26262a] text-emerald-400 hover:opacity-90 similar-add touch-manipulation" data-product="${i}">ADD</button>
           </div>
         </div>
       `;
@@ -1110,28 +1137,43 @@
       renderCart();
     }
 
-    function searchProducts(q) {
-      searchQuery = (q || '').trim().toLowerCase();
-      renderProductsGrid(searchQuery || null);
-      const panel = document.getElementById('searchPanel');
-      const results = document.getElementById('searchResults');
-      if (!searchQuery) {
-        results.innerHTML = '';
-        return;
-      }
-      const list = products.filter((p, i) => p.name.toLowerCase().includes(searchQuery) || p.description.toLowerCase().includes(searchQuery));
-      results.innerHTML = list.slice(0, 6).map((p, i) => {
+    function renderSearchResultsInto(container, list) {
+      if (!container) return;
+      const html = list.slice(0, 6).map((p) => {
         const idx = products.indexOf(p);
-        return `<button type="button" class="w-full text-left px-3 py-2 rounded-lg hover:bg-white/50 text-gray-700 search-result" data-product="${idx}">${p.name} — ${p.price}</button>`;
+        return `<button type="button" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-pink-50 text-gray-700 search-result border-b border-gray-100 last:border-0" data-product="${idx}">${p.name} — ${p.price}</button>`;
       }).join('') || '<p class="px-3 py-2 text-gray-500 text-sm">No results.</p>';
-      results.querySelectorAll('.search-result').forEach(btn => {
+      container.innerHTML = html;
+      container.querySelectorAll('.search-result').forEach(btn => {
         btn.addEventListener('click', () => {
           document.getElementById('searchPanel').classList.remove('open');
-          document.getElementById('searchInput').value = '';
-          results.innerHTML = '';
+          const barRow = document.getElementById('searchBarRow');
+          if (barRow) barRow.classList.remove('open');
+          const si = document.getElementById('searchInput');
+          const sim = document.getElementById('searchInputMobile');
+          if (si) si.value = '';
+          if (sim) sim.value = '';
+          const res = document.getElementById('searchResults');
+          const resM = document.getElementById('searchResultsMobile');
+          if (res) res.innerHTML = '';
+          if (resM) resM.innerHTML = '';
           showProductDetail(parseInt(btn.dataset.product));
         });
       });
+    }
+    function searchProducts(q) {
+      searchQuery = (q || '').trim().toLowerCase();
+      renderProductsGrid(searchQuery || null);
+      const results = document.getElementById('searchResults');
+      const resultsMobile = document.getElementById('searchResultsMobile');
+      if (!searchQuery) {
+        if (results) results.innerHTML = '';
+        if (resultsMobile) resultsMobile.innerHTML = '';
+        return;
+      }
+      const list = products.filter((p) => p.name.toLowerCase().includes(searchQuery) || p.description.toLowerCase().includes(searchQuery));
+      renderSearchResultsInto(results, list);
+      renderSearchResultsInto(resultsMobile, list);
     }
 
     renderProductsGrid();
@@ -1168,18 +1210,23 @@
 
     document.getElementById('searchToggle').addEventListener('click', () => {
       const panel = document.getElementById('searchPanel');
-      const overlay = document.getElementById('searchOverlay');
-      panel.classList.toggle('open');
-      if (overlay) overlay.classList.toggle('open', panel.classList.contains('open'));
-      document.getElementById('searchInput').focus();
+      const barRow = document.getElementById('searchBarRow');
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        barRow.classList.toggle('open');
+        if (barRow.classList.contains('open')) document.getElementById('searchInputMobile').focus();
+      } else {
+        panel.classList.toggle('open');
+        if (panel.classList.contains('open')) document.getElementById('searchInput').focus();
+      }
     });
     document.getElementById('searchInput').addEventListener('input', e => searchProducts(e.target.value));
+    const searchInputMobileEl = document.getElementById('searchInputMobile');
+    if (searchInputMobileEl) searchInputMobileEl.addEventListener('input', e => searchProducts(e.target.value));
     document.addEventListener('click', e => {
-      if (e.target.id === 'searchOverlay' || (!e.target.closest('#searchPanel') && !e.target.closest('#searchToggle'))) {
-        document.getElementById('searchPanel').classList.remove('open');
-        const overlay = document.getElementById('searchOverlay');
-        if (overlay) overlay.classList.remove('open');
-      }
+      if (e.target.closest('#searchPanel') || e.target.closest('#searchToggle') || e.target.closest('#searchBarRow')) return;
+      document.getElementById('searchPanel').classList.remove('open');
+      document.getElementById('searchBarRow').classList.remove('open');
     });
 
     document.getElementById('cartBtn').addEventListener('click', openCart);
@@ -1190,24 +1237,21 @@
       const toggle = document.getElementById('navMenuToggle');
       const menu = document.getElementById('navMobileMenu');
       const overlay = document.getElementById('navMenuOverlay');
+      const closeBtn = document.getElementById('navMenuClose');
       if (!toggle || !menu) return;
+      function openDrawer() {
+        menu.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+        if (overlay) overlay.classList.add('open');
+        toggle.querySelector('.nav-menu-icon').classList.add('hidden');
+        toggle.querySelector('.nav-menu-close').classList.remove('hidden');
+      }
       toggle.addEventListener('click', () => {
-        const isOpen = !menu.classList.contains('hidden');
-        if (isOpen) {
-          menu.classList.add('hidden');
-          toggle.setAttribute('aria-expanded', 'false');
-          if (overlay) overlay.classList.remove('open');
-          toggle.querySelector('.nav-menu-icon').classList.remove('hidden');
-          toggle.querySelector('.nav-menu-close').classList.add('hidden');
-        } else {
-          menu.classList.remove('hidden');
-          toggle.setAttribute('aria-expanded', 'true');
-          if (overlay) overlay.classList.add('open');
-          toggle.querySelector('.nav-menu-icon').classList.add('hidden');
-          toggle.querySelector('.nav-menu-close').classList.remove('hidden');
-        }
+        if (menu.classList.contains('open')) closeNavMobileMenu();
+        else openDrawer();
       });
       if (overlay) overlay.addEventListener('click', closeNavMobileMenu);
+      if (closeBtn) closeBtn.addEventListener('click', closeNavMobileMenu);
     })();
   </script>
 </body>
