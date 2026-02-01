@@ -349,7 +349,7 @@
             <!-- Product Cards -->
             <div id="product0" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="0">
               <div class="relative mb-4 rounded-2xl overflow-hidden bg-gray-50 aspect-square min-h-[176px] sm:min-h-[208px]">
-                <img src="images/product-0.png" alt="Whitening cream" class="product-img w-full h-full object-cover" onerror="this.style.display='none'">
+                <img src="images/hero-0.png" alt="Whitening cream" class="product-img w-full h-full object-cover" onerror="this.onerror=null;this.src='images/product-0.png';">
               </div>
               <span class="text-xs font-medium tracking-wider uppercase">New Arrival</span>
               <h3 class="font-display text-2xl font-semibold mt-2">Whitening cream</h3>
@@ -357,7 +357,7 @@
             </div>
             <div id="product1" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="1">
               <div class="relative mb-4 rounded-2xl overflow-hidden bg-gray-50 aspect-square min-h-[176px] sm:min-h-[208px]">
-                <img src="images/product-1.png" alt="Shampoo & conditioner" class="product-img w-full h-full object-cover" onerror="this.style.display='none'">
+                <img src="images/hero-1.png" alt="Shampoo & conditioner" class="product-img w-full h-full object-cover" onerror="this.onerror=null;this.src='images/product-1.png';">
               </div>
               <span class="text-xs font-medium tracking-wider uppercase">Bestseller</span>
               <h3 class="font-display text-2xl font-semibold mt-2">Shampoo & conditioner</h3>
@@ -365,7 +365,7 @@
             </div>
             <div id="product2" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="2">
               <div class="relative mb-4 rounded-2xl overflow-hidden bg-gray-50 aspect-square min-h-[176px] sm:min-h-[208px]">
-                <img src="images/product-2.png" alt="Face cleanser" class="product-img w-full h-full object-cover" onerror="this.style.display='none'">
+                <img src="images/hero-2.png" alt="Face cleanser" class="product-img w-full h-full object-cover" onerror="this.onerror=null;this.src='images/product-2.png';">
               </div>
               <span class="text-xs font-medium tracking-wider uppercase">Premium</span>
               <h3 class="font-display text-2xl font-semibold mt-2">Face cleanser</h3>
@@ -373,7 +373,7 @@
             </div>
             <div id="product3" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="3">
               <div class="relative mb-4 rounded-2xl overflow-hidden bg-gray-50 aspect-square min-h-[176px] sm:min-h-[208px]">
-                <img src="images/product-3.png" alt="Body lotion" class="product-img w-full h-full object-cover" onerror="this.style.display='none'">
+                <img src="images/hero-3.png" alt="Body lotion" class="product-img w-full h-full object-cover" onerror="this.onerror=null;this.src='images/product-3.png';">
               </div>
               <span class="text-xs font-medium tracking-wider uppercase">Featured</span>
               <h3 class="font-display text-2xl font-semibold mt-2">Body lotion</h3>
@@ -381,7 +381,7 @@
             </div>
             <div id="product4" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="4">
               <div class="relative mb-4 rounded-2xl overflow-hidden bg-gray-50 aspect-square min-h-[176px] sm:min-h-[208px]">
-                <img src="images/product-4.png" alt="Kojic Acid face cream" class="product-img w-full h-full object-cover" onerror="this.style.display='none'">
+                <img src="images/hero-4.png" alt="Kojic Acid face cream" class="product-img w-full h-full object-cover" onerror="this.onerror=null;this.src='images/product-4.png';">
               </div>
               <span class="text-xs font-medium tracking-wider uppercase">Popular</span>
               <h3 class="font-display text-2xl font-semibold mt-2">Kojic Acid face cream</h3>
@@ -598,18 +598,18 @@
     const PRIMARY = '#C86A8A';
 
     const products = [
-      { name: 'Whitening cream', capacity: '30ml', price: 'TSh 250,000', priceValue: 250000, category: 'cream', description: 'Our signature Whitening cream combines advanced brightening technology with nourishing ingredients. This luxurious formula penetrates deep into the skin to deliver an even, radiant complexion. Perfect for daily use on all skin types.', benefits: ['Brightens and evens skin tone', 'Reduces dark spots', 'Improves skin radiance', 'Nourishing formula'], howTo: 'Apply to clean, dry face morning and evening. Gently massage in upward motions until absorbed. Follow with sunscreen during the day.', imageClass: 'from-pink-50 to-pink-100', svg: `` },
-      { name: 'Shampoo & conditioner', capacity: '250ml', price: 'TSh 185,000', priceValue: 185000, category: 'hair', description: 'Infused with nourishing ingredients, this shampoo and conditioner duo strengthens hair and adds shine. Suitable for all hair types.', benefits: ['Strengthens hair', 'Adds shine', 'Nourishing formula', 'Suitable for all hair types'], howTo: 'Apply shampoo to wet hair, massage, rinse. Follow with conditioner, leave for 2-3 minutes, then rinse.', imageClass: 'from-green-50 to-green-100', svg: `` },
+      { name: 'Whitening cream', capacity: '30ml', price: 'TSh 30,000', priceValue: 30000, category: 'cream', description: 'Our signature Whitening cream combines advanced brightening technology with nourishing ingredients. This luxurious formula penetrates deep into the skin to deliver an even, radiant complexion. Perfect for daily use on all skin types.', benefits: ['Brightens and evens skin tone', 'Reduces dark spots', 'Improves skin radiance', 'Nourishing formula'], howTo: 'Apply to clean, dry face morning and evening. Gently massage in upward motions until absorbed. Follow with sunscreen during the day.', imageClass: 'from-pink-50 to-pink-100', svg: `` },
+      { name: 'Shampoo & conditioner', capacity: '250ml', price: 'TSh 15,000', priceValue: 15000, category: 'hair', description: 'Infused with nourishing ingredients, this shampoo and conditioner duo strengthens hair and adds shine. Suitable for all hair types.', benefits: ['Strengthens hair', 'Adds shine', 'Nourishing formula', 'Suitable for all hair types'], howTo: 'Apply shampoo to wet hair, massage, rinse. Follow with conditioner, leave for 2-3 minutes, then rinse.', imageClass: 'from-green-50 to-green-100', svg: `` },
       { name: 'Face cleanser', capacity: '150ml', price: 'TSh 215,000', priceValue: 215000, category: 'cleanser', description: 'Gentle face cleanser that removes impurities and makeup while maintaining your skin\'s natural balance. Perfect for daily use.', benefits: ['Deep cleansing', 'Removes makeup', 'Gentle formula', 'Balances skin'], howTo: 'Wet face with lukewarm water. Apply a small amount and massage in circular motions. Rinse thoroughly and pat dry.', imageClass: 'from-yellow-50 to-yellow-200', svg: `` },
-      { name: 'Body lotion', capacity: '200ml', price: 'TSh 125,000', priceValue: 125000, category: 'lotion', description: 'Nourishing body lotion that moisturizes and softens skin. Absorbs quickly without greasiness.', benefits: ['Deep moisturization', 'Softens skin', 'Non-greasy', 'Long-lasting'], howTo: 'Apply to body after shower or as needed. Massage until absorbed.', imageClass: 'from-violet-100 to-violet-200', svg: `` },
-      { name: 'Kojic Acid face cream', capacity: '50ml', price: 'TSh 95,000', priceValue: 95000, category: 'cream', description: 'Kojic Acid face cream helps brighten skin and reduce the appearance of dark spots. Gentle yet effective formula.', benefits: ['Brightens complexion', 'Reduces dark spots', 'Gentle formula', 'Suitable for all skin types'], howTo: 'Apply to clean, dry face morning and evening. Use sunscreen during the day.', imageClass: 'from-rose-50 to-rose-200', svg: `` },
-      { name: 'Body oil', capacity: '100ml', price: 'TSh 165,000', priceValue: 165000, category: 'oil', description: 'Nourishing body oil that leaves skin soft and glowing. Can be used alone or mixed with lotion.', benefits: ['Nourishing', 'Adds glow', 'Non-greasy absorption', 'Versatile use'], howTo: 'Apply a few drops to damp skin after shower. Massage in until absorbed.', imageClass: 'from-amber-50 to-amber-100', svg: `` }
+      { name: 'Body lotion', capacity: '200ml', price: 'TSh 30,000', priceValue: 30000, category: 'lotion', description: 'Nourishing body lotion that moisturizes and softens skin. Absorbs quickly without greasiness.', benefits: ['Deep moisturization', 'Softens skin', 'Non-greasy', 'Long-lasting'], howTo: 'Apply to body after shower or as needed. Massage until absorbed.', imageClass: 'from-violet-100 to-violet-200', svg: `` },
+      { name: 'Kojic Acid face cream', capacity: '50ml', price: 'TSh 30,000', priceValue: 30000, category: 'cream', description: 'Kojic Acid face cream helps brighten skin and reduce the appearance of dark spots. Gentle yet effective formula.', benefits: ['Brightens complexion', 'Reduces dark spots', 'Gentle formula', 'Suitable for all skin types'], howTo: 'Apply to clean, dry face morning and evening. Use sunscreen during the day.', imageClass: 'from-rose-50 to-rose-200', svg: `` },
+      { name: 'Body oil', capacity: '100ml', price: 'TSh 30,000', priceValue: 30000, category: 'oil', description: 'Nourishing body oil that leaves skin soft and glowing. Can be used alone or mixed with lotion.', benefits: ['Nourishing', 'Adds glow', 'Non-greasy absorption', 'Versatile use'], howTo: 'Apply a few drops to damp skin after shower. Massage in until absorbed.', imageClass: 'from-amber-50 to-amber-100', svg: `` }
     ];
 
     const collections = [
-      { name: 'Starter Set', description: 'Cleanser, Toner & Serum — perfect intro', productIndices: [3, 4, 0], totalPrice: 470000 },
-      { name: 'Glow Routine', description: 'Serum, Vitamin C & Cream for radiant skin', productIndices: [0, 2, 1], totalPrice: 650000 },
-      { name: 'Complete Collection', description: 'All 6 products — full skincare routine', productIndices: [0, 1, 2, 3, 4, 5], totalPrice: 1035000 }
+      { name: 'Starter Set', description: 'Body lotion, Kojic Acid & Whitening cream — perfect intro', productIndices: [3, 4, 0], totalPrice: 90000 },
+      { name: 'Glow Routine', description: 'Whitening cream, Face cleanser & Shampoo — radiant skin', productIndices: [0, 2, 1], totalPrice: 260000 },
+      { name: 'Complete Collection', description: 'All 6 products — full skincare routine', productIndices: [0, 1, 2, 3, 4, 5], totalPrice: 350000 }
     ];
 
     let currentIndex = 0;

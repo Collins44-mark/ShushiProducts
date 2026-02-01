@@ -52,12 +52,21 @@
                cleanser, Body lotion, Kojic Acid face cream). Cards slide
                left/right; one is centered, others are slightly behind.
 
-  Images used: product-0.png, product-1.png, product-2.png, product-3.png,
-               product-4.png  (one image per card, in that order)
+  Images used:  SEPARATE hero images for the slideshow (you can use
+                different images from the product grid):
 
-  How to update:  Replace product-0.png … product-4.png in this folder.
-  Refresh the page (hard refresh: Ctrl+Shift+R or Cmd+Shift+R if needed).
-  No code changes required.
+    hero-0.png  →  Card 1 (Whitening cream)
+    hero-1.png  →  Card 2 (Shampoo & conditioner)
+    hero-2.png  →  Card 3 (Face cleanser)
+    hero-3.png  →  Card 4 (Body lotion)
+    hero-4.png  →  Card 5 (Kojic Acid face cream)
+
+  If hero-0.png … hero-4.png are missing, the carousel falls back to
+  product-0.png … product-4.png automatically.
+
+  How to update:  Add or replace hero-0.png … hero-4.png in this folder
+  with the images you want for the home-page slideshow. Refresh the page
+  (hard refresh: Ctrl+Shift+R or Cmd+Shift+R if needed).
 
 
 --------------------------------------------------------------------------------
@@ -87,12 +96,11 @@
   Put these files in the "images" folder (same folder as this README):
 
     logo.png
-    product-0.png
-    product-1.png
-    product-2.png
-    product-3.png
-    product-4.png
-    product-5.png
+    product-0.png … product-5.png   (required for product grid, detail, cart)
+    hero-0.png … hero-4.png         (optional; for home-page slideshow only)
+
+  If hero-0.png … hero-4.png are present, they are used in the home-page
+  carousel. If not, product-0.png … product-4.png are used there.
 
   • No spaces in filenames (avoid " product-0.png" with a leading space).
   • Use lowercase. Format: .png or .jpg for products.
