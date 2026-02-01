@@ -138,6 +138,8 @@
     #cartDrawer.open { transform: translateX(0); }
     #cartOverlay.open { opacity: 1; pointer-events: auto; }
     #searchPanel.open { display: block !important; }
+    #navMenuOverlay.open { opacity: 1; pointer-events: auto; }
+    #searchOverlay.open { opacity: 1; pointer-events: auto; }
 
     .screen { min-height: 100vh; display: block; }
     .screen.hidden { display: none !important; }
@@ -229,6 +231,22 @@
     @media (max-width: 768px) {
       input[type="search"], input[type="text"], input[type="email"] { font-size: 16px !important; }
     }
+    /* Mobile: search panel full-width and well-sized */
+    @media (max-width: 640px) {
+      .search-panel { left: 1rem; right: 1rem; width: auto !important; max-width: none !important; min-width: 0; padding: 1rem; }
+    }
+    /* Mobile: product detail — card-like contained layout, prominent Add to Cart */
+    @media (max-width: 768px) {
+      #screenProduct .product-detail-card { border-radius: 1rem; overflow: hidden; box-shadow: 0 2px 6px 0 rgba(0,0,0,0.07), 0 8px 20px -4px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.06); }
+      #screenProduct .detail-add-wrap { padding-bottom: env(safe-area-inset-bottom); }
+      #detailAddToCart.add-btn-mobile { border-radius: 0.75rem; font-weight: 700; min-height: 52px; font-size: 1rem; box-shadow: 0 2px 8px rgba(200,106,138,0.35); }
+    }
+    /* Collections mobile: single column, larger set box and image so Details button is clear */
+    @media (max-width: 640px) {
+      .collections-grid-mobile { grid-template-columns: 1fr !important; gap: 1.25rem !important; }
+      .collections-grid-mobile .set-carousel-view { min-height: 280px; aspect-ratio: 1; }
+      .collections-grid-mobile .set-slide-details-tab { width: 32px; height: 72px; font-size: 0.7rem; }
+    }
 
   </style>
 </head>
@@ -261,9 +279,9 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
-              <div id="searchPanel" class="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] max-w-[20rem] sm:w-72 md:w-96 glass-strong rounded-2xl p-3 shadow-xl hidden z-50">
-                <input type="search" id="searchInput" placeholder="Search products…" class="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-[#C86A8A]/30 bg-white/80 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C86A8A]/50 text-base" />
-                <div id="searchResults" class="mt-2 max-h-[50vh] sm:max-h-64 overflow-y-auto"></div>
+              <div id="searchPanel" class="search-panel absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] min-w-[280px] max-w-[20rem] sm:w-72 sm:min-w-0 md:w-96 glass-strong rounded-2xl p-3 sm:p-3 shadow-xl hidden z-50 max-h-[85vh] flex flex-col">
+                <input type="search" id="searchInput" placeholder="Search products…" class="w-full px-4 py-3 sm:py-2 rounded-xl border border-[#C86A8A]/30 bg-white/80 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C86A8A]/50 text-base flex-shrink-0" />
+                <div id="searchResults" class="mt-2 max-h-[50vh] sm:max-h-64 overflow-y-auto flex-1 min-h-0"></div>
               </div>
             </div>
             <button type="button" id="cartBtn" class="p-2.5 sm:p-2 rounded-full hover:bg-white/30 transition-colors relative text-[#C86A8A] touch-manipulation" aria-label="Cart">
@@ -278,7 +296,7 @@
             </button>
           </div>
         </div>
-        <div id="navMobileMenu" class="md:hidden hidden absolute left-0 right-0 top-full mt-0 glass-strong border-t border-white/30 shadow-xl rounded-b-2xl overflow-hidden">
+        <div id="navMobileMenu" class="md:hidden hidden absolute left-0 right-0 top-full mt-0 glass-strong border-t border-white/30 shadow-xl rounded-b-2xl overflow-hidden z-50">
           <div class="px-4 py-4 flex flex-col gap-1">
             <button type="button" data-screen="home" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-white/40 text-[#C86A8A]">Shop</button>
             <button type="button" data-screen="collections" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-white/40 text-[#C86A8A]">Collections</button>
@@ -288,6 +306,10 @@
         </div>
       </div>
     </nav>
+    <!-- Mobile menu backdrop: dims background when menu is open -->
+    <div id="navMenuOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300 md:hidden" aria-hidden="true"></div>
+    <!-- Search backdrop: dims background when search is open on mobile -->
+    <div id="searchOverlay" class="fixed inset-0 bg-black/40 z-[45] opacity-0 pointer-events-none transition-opacity duration-300 sm:hidden" aria-hidden="true"></div>
 
     <!-- HOME SCREEN -->
     <div id="screenHome" class="screen">
@@ -524,9 +546,9 @@
     <div id="screenProduct" class="screen hidden min-h-screen bg-gray-50">
       <div class="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
         <div class="max-w-6xl mx-auto">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-10 mb-10 sm:mb-16">
-            <div id="detailImage" class="relative rounded-xl overflow-hidden bg-gray-50 aspect-square min-h-[260px] sm:min-h-[320px] w-full product-box-shadow"></div>
-            <div class="min-w-0">
+          <div class="product-detail-card bg-white md:bg-transparent grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-10 mb-10 sm:mb-16">
+            <div id="detailImage" class="relative rounded-t-xl md:rounded-xl overflow-hidden bg-gray-50 aspect-square min-h-[260px] sm:min-h-[320px] w-full product-box-shadow"></div>
+            <div class="min-w-0 px-4 pb-4 md:px-0 md:pb-0 flex flex-col">
               <h1 id="detailTitle" class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold mb-3 sm:mb-4 text-[#C86A8A]">Product Name</h1>
               <p id="detailDescription" class="text-sm sm:text-base mb-4 sm:mb-6 leading-relaxed text-gray-600"></p>
               <div class="mb-4 sm:mb-6">
@@ -537,12 +559,12 @@
                 <h3 class="font-semibold mb-2 text-[#C86A8A] text-sm sm:text-base">How to Use</h3>
                 <p id="detailHowTo" class="text-sm text-gray-600"></p>
               </div>
-              <div class="border-t border-gray-200 pt-4 sm:pt-6">
+              <div class="detail-add-wrap border-t border-gray-200 pt-4 sm:pt-6 mt-auto">
                 <div class="flex items-center justify-between mb-4 sm:mb-6">
                   <span id="detailPrice" class="font-semibold text-2xl sm:text-3xl text-[#C86A8A]">TSh 0</span>
                   <span id="detailCapacity" class="text-sm text-gray-600">50ml</span>
                 </div>
-                <button type="button" id="detailAddToCart" class="w-full py-3.5 sm:py-4 rounded-full text-white font-semibold text-base sm:text-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] bg-[#C86A8A] touch-manipulation">Add to Cart</button>
+                <button type="button" id="detailAddToCart" class="add-btn-mobile w-full py-3.5 sm:py-4 rounded-full text-white font-semibold text-base sm:text-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] bg-[#C86A8A] touch-manipulation">Add to Cart</button>
               </div>
             </div>
           </div>
@@ -659,10 +681,12 @@
     function closeNavMobileMenu() {
       const menu = document.getElementById('navMobileMenu');
       const toggle = document.getElementById('navMenuToggle');
+      const overlay = document.getElementById('navMenuOverlay');
       const icon = toggle && toggle.querySelector('.nav-menu-icon');
       const closeIcon = toggle && toggle.querySelector('.nav-menu-close');
       if (menu) menu.classList.add('hidden');
       if (toggle) toggle.setAttribute('aria-expanded', 'false');
+      if (overlay) overlay.classList.remove('open');
       if (icon) icon.classList.remove('hidden');
       if (closeIcon) closeIcon.classList.add('hidden');
     }
@@ -761,7 +785,7 @@
         </div>
         `;
       }).join('');
-      container.innerHTML = '<div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-6">' + cardsHtml + '</div>';
+      container.innerHTML = '<div class="collections-grid-mobile grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-6">' + cardsHtml + '</div>';
       container.querySelectorAll('.add-collection-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const ci = parseInt(btn.dataset.collection);
@@ -1143,12 +1167,19 @@
     });
 
     document.getElementById('searchToggle').addEventListener('click', () => {
-      document.getElementById('searchPanel').classList.toggle('open');
+      const panel = document.getElementById('searchPanel');
+      const overlay = document.getElementById('searchOverlay');
+      panel.classList.toggle('open');
+      if (overlay) overlay.classList.toggle('open', panel.classList.contains('open'));
       document.getElementById('searchInput').focus();
     });
     document.getElementById('searchInput').addEventListener('input', e => searchProducts(e.target.value));
     document.addEventListener('click', e => {
-      if (!e.target.closest('#searchPanel') && !e.target.closest('#searchToggle')) document.getElementById('searchPanel').classList.remove('open');
+      if (e.target.id === 'searchOverlay' || (!e.target.closest('#searchPanel') && !e.target.closest('#searchToggle'))) {
+        document.getElementById('searchPanel').classList.remove('open');
+        const overlay = document.getElementById('searchOverlay');
+        if (overlay) overlay.classList.remove('open');
+      }
     });
 
     document.getElementById('cartBtn').addEventListener('click', openCart);
@@ -1158,21 +1189,25 @@
     (function initMobileNav() {
       const toggle = document.getElementById('navMenuToggle');
       const menu = document.getElementById('navMobileMenu');
+      const overlay = document.getElementById('navMenuOverlay');
       if (!toggle || !menu) return;
       toggle.addEventListener('click', () => {
         const isOpen = !menu.classList.contains('hidden');
         if (isOpen) {
           menu.classList.add('hidden');
           toggle.setAttribute('aria-expanded', 'false');
+          if (overlay) overlay.classList.remove('open');
           toggle.querySelector('.nav-menu-icon').classList.remove('hidden');
           toggle.querySelector('.nav-menu-close').classList.add('hidden');
         } else {
           menu.classList.remove('hidden');
           toggle.setAttribute('aria-expanded', 'true');
+          if (overlay) overlay.classList.add('open');
           toggle.querySelector('.nav-menu-icon').classList.add('hidden');
           toggle.querySelector('.nav-menu-close').classList.remove('hidden');
         }
       });
+      if (overlay) overlay.addEventListener('click', closeNavMobileMenu);
     })();
   </script>
 </body>
