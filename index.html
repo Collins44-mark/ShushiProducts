@@ -1,0 +1,1179 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shushi Products</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { box-sizing: border-box; }
+
+    .font-display { font-family: 'Cormorant Garamond', serif; }
+    .font-body { font-family: 'Montserrat', sans-serif; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .glass-strong {
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .product-carousel { perspective: 1200px; }
+
+    .product-card {
+      transform-style: preserve-3d;
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .product-card.active {
+      transform: rotateY(0deg) scale(1.1) translateZ(80px);
+      z-index: 30;
+    }
+
+    .product-card.prev {
+      transform: rotateY(35deg) scale(0.85) translateX(-120px) translateZ(-50px);
+      z-index: 20;
+      opacity: 0.5;
+      filter: blur(4px);
+    }
+
+    .product-card.next {
+      transform: rotateY(-35deg) scale(0.85) translateX(120px) translateZ(-50px);
+      z-index: 20;
+      opacity: 0.5;
+      filter: blur(4px);
+    }
+
+    .product-card.hidden-left {
+      transform: rotateY(60deg) scale(0.6) translateX(-250px) translateZ(-150px);
+      z-index: 10;
+      opacity: 0;
+    }
+
+    .product-card.hidden-right {
+      transform: rotateY(-60deg) scale(0.6) translateX(250px) translateZ(-150px);
+      z-index: 10;
+      opacity: 0;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .blob-1 { width: 400px; height: 400px; top: -100px; left: -100px; animation-delay: 0s; }
+    .blob-2 { width: 350px; height: 350px; bottom: -50px; right: -50px; animation-delay: -2s; }
+    .blob-3 { width: 250px; height: 250px; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -4s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    .blob-3 { animation: floatBlob3 8s ease-in-out infinite -4s; }
+    @keyframes floatBlob3 {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      33% { transform: translate(calc(-50% + 30px), calc(-50% - 30px)) scale(1.05); }
+      66% { transform: translate(calc(-50% - 20px), calc(-50% + 20px)) scale(0.95); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .shimmer {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 3s infinite;
+    }
+
+    .progress-bar { transition: width 4s linear; }
+
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: #C86A8A;
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+    .nav-link:hover::after { width: 100%; }
+
+    .btn-primary { position: relative; overflow: hidden; }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s ease;
+    }
+    .btn-primary:hover::before { left: 100%; }
+
+    .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #cartDrawer.open { transform: translateX(0); }
+    #cartOverlay.open { opacity: 1; pointer-events: auto; }
+    #searchPanel.open { display: block !important; }
+
+    .screen { min-height: 100vh; display: block; }
+    .screen.hidden { display: none !important; }
+    .set-carousel-view { overflow: hidden; }
+    .set-carousel-track { display: flex; transition: transform 0.35s ease-out; height: 100%; }
+    .set-carousel-slide { flex: 0 0 100%; width: 100%; height: 100%; min-height: 0; }
+
+    /* Collection set: same as products page — square image area, image fills (cover), normal e-commerce size */
+    .set-carousel-view { aspect-ratio: 1; width: 100%; }
+    .set-carousel-view .set-carousel-track { height: 100%; }
+    .set-carousel-view .set-carousel-slide { height: 100%; }
+    .set-slide-card { position: relative; overflow: hidden; border-radius: 0.75rem; cursor: grab; background: #f5f5f5; height: 100%; width: 100%; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.06); }
+    .set-slide-card:active { cursor: grabbing; }
+    .set-slide-image-wrap { position: absolute; inset: 0; display: block; pointer-events: none; }
+    .set-slide-image-wrap * { pointer-events: auto; }
+    .set-slide-image-wrap .product-img { object-fit: cover !important; width: 100%; height: 100%; display: block; }
+    .set-slide-details-tab {
+      position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+      width: 28px; height: 64px; border-radius: 0 12px 12px 0;
+      background: rgba(38, 38, 42, 0.9); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 600; writing-mode: vertical-rl; letter-spacing: 0.05em;
+      cursor: pointer; user-select: none; z-index: 2; pointer-events: auto;
+      transition: background 0.2s;
+    }
+    .set-slide-details-tab:hover { background: rgba(38, 38, 42, 0.98); }
+    .set-slide-details-panel {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 42%;
+      min-width: 110px; max-width: 200px;
+      background: rgba(38, 38, 42, 0.92);
+      display: flex; flex-direction: column; align-items: flex-start;
+      padding: 1rem 0.75rem; padding-top: 2.5rem; box-sizing: border-box;
+      transform: translateX(-100%); transition: transform 0.35s ease-in-out;
+      z-index: 1; overflow: hidden; border-radius: 1rem 0 0 1rem;
+      pointer-events: auto;
+    }
+    .set-slide-card.details-open .set-slide-details-panel { transform: translateX(0); }
+    .set-slide-details-panel .close-btn {
+      position: absolute; top: 0.5rem; left: 0.5rem;
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.12); color: #fff;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;
+      transition: background 0.2s;
+    }
+    .set-slide-details-panel .close-btn:hover { background: rgba(255,255,255,0.2); }
+    .set-slide-details-panel .panel-heading { font-weight: 700; color: #fff; font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .set-slide-details-panel .panel-line { width: 100%; height: 1px; background: rgba(255,255,255,0.35); margin-bottom: 0.6rem; }
+    .set-slide-details-panel .detail-row { margin-bottom: 0.45rem; }
+    .set-slide-details-panel .detail-label { font-size: 0.65rem; color: rgba(255,255,255,0.75); display: block; }
+    .set-slide-details-panel .detail-value { font-size: 0.75rem; color: #fff; font-weight: 600; }
+    .set-slide-details-panel .features { font-size: 0.65rem; color: rgba(255,255,255,0.9); line-height: 1.4; list-style: none; padding: 0; margin: 0; margin-top: 0.25rem; }
+
+    /* Product images: autofit fill the box, no white space — modern e-commerce */
+    .product-img { object-fit: cover !important; width: 100%; height: 100%; display: block; }
+    .product-img-box { display: block; overflow: hidden; }
+    .product-img-placeholder.hidden { display: none !important; }
+    .product-img-placeholder { display: flex; align-items: center; justify-content: center; background: #f3f4f6; }
+
+    /* Standard e-commerce box: grey shadow, smart and modern quality */
+    .product-box-shadow { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.06), 0 4px 12px -2px rgba(0,0,0,0.05); }
+    .product-box-shadow-strong { box-shadow: 0 2px 6px 0 rgba(0,0,0,0.07), 0 8px 20px -4px rgba(0,0,0,0.06); }
+    .product-item:hover { box-shadow: 0 2px 6px 0 rgba(0,0,0,0.07), 0 8px 20px -4px rgba(0,0,0,0.06); }
+
+    /* Responsive: carousel cards smaller on narrow screens */
+    @media (max-width: 640px) {
+      .product-card.active { transform: rotateY(0deg) scale(1.05) translateZ(40px); }
+      .product-card.prev { transform: rotateY(30deg) scale(0.82) translateX(-80px) translateZ(-40px); }
+      .product-card.next { transform: rotateY(-30deg) scale(0.82) translateX(80px) translateZ(-40px); }
+      .product-card.hidden-left { transform: rotateY(50deg) scale(0.55) translateX(-180px) translateZ(-100px); }
+      .product-card.hidden-right { transform: rotateY(-50deg) scale(0.55) translateX(180px) translateZ(-100px); }
+    }
+    @media (max-width: 480px) {
+      .product-card.active { transform: rotateY(0deg) scale(1) translateZ(20px); }
+      .product-card.prev { transform: rotateY(25deg) scale(0.78) translateX(-60px) translateZ(-30px); }
+      .product-card.next { transform: rotateY(-25deg) scale(0.78) translateX(60px) translateZ(-30px); }
+      .product-card.hidden-left { transform: rotateY(45deg) scale(0.5) translateX(-140px) translateZ(-80px); }
+      .product-card.hidden-right { transform: rotateY(-45deg) scale(0.5) translateX(140px) translateZ(-80px); }
+    }
+    /* Collection details panel: narrower on small screens */
+    @media (max-width: 640px) {
+      .set-slide-details-panel { width: 85%; max-width: 200px; min-width: 100px; }
+    }
+    /* Touch-friendly tap targets */
+    @media (hover: none) {
+      .btn-primary:hover::before { left: 100%; }
+      .nav-link:hover::after { width: 100%; }
+    }
+    /* Prevent zoom on input focus on iOS when font-size < 16px */
+    @media (max-width: 768px) {
+      input[type="search"], input[type="text"], input[type="email"] { font-size: 16px !important; }
+    }
+
+  </style>
+</head>
+<body class="h-full font-body overflow-x-hidden overflow-y-auto bg-white text-gray-700">
+  <div class="app-wrapper w-full min-h-full relative">
+
+    <!-- Navigation -->
+    <nav class="glass-strong fixed top-0 left-0 right-0 z-50 pt-[env(safe-area-inset-top)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+        <div class="flex items-center justify-between gap-2">
+          <button type="button" id="navLogo" class="flex items-center space-x-2 bg-transparent border-none cursor-pointer text-left min-w-0 flex-1 sm:flex-initial">
+            <img src="images/logo.png" alt="Shushi Products" class="h-10 sm:h-12 w-auto max-w-[160px] sm:max-w-[200px] object-contain logo-img" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+            <svg class="w-10 sm:w-12 h-10 sm:h-12 text-rose-400 hidden logo-fallback" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1.5" />
+              <path d="M20 8c0 12-8 16-8 22a8 8 0 1016 0c0-6-8-10-8-22z" fill="currentColor" opacity="0.6" />
+              <circle cx="20" cy="26" r="4" fill="currentColor" />
+            </svg>
+            <span class="font-display text-lg sm:text-xl md:text-2xl font-semibold text-[#C86A8A] truncate">SHUSHI PRODUCTS</span>
+          </button>
+          <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
+            <button type="button" data-screen="home" class="nav-link text-sm font-medium tracking-wide text-gray-600 bg-transparent border-none cursor-pointer">Shop</button>
+            <button type="button" data-screen="collections" class="nav-link text-sm font-medium tracking-wide text-gray-600 bg-transparent border-none cursor-pointer">Collections</button>
+            <button type="button" data-screen="home" data-scroll="about" class="nav-link text-sm font-medium tracking-wide text-gray-600 bg-transparent border-none cursor-pointer">About</button>
+            <button type="button" data-screen="home" data-scroll="footer" class="nav-link text-sm font-medium tracking-wide text-gray-600 bg-transparent border-none cursor-pointer">Contact</button>
+          </div>
+          <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div class="relative">
+              <button type="button" id="searchToggle" class="p-2.5 sm:p-2 rounded-full hover:bg-white/30 transition-colors text-[#C86A8A] touch-manipulation" aria-label="Search">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+              <div id="searchPanel" class="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] max-w-[20rem] sm:w-72 md:w-96 glass-strong rounded-2xl p-3 shadow-xl hidden z-50">
+                <input type="search" id="searchInput" placeholder="Search products…" class="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-[#C86A8A]/30 bg-white/80 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C86A8A]/50 text-base" />
+                <div id="searchResults" class="mt-2 max-h-[50vh] sm:max-h-64 overflow-y-auto"></div>
+              </div>
+            </div>
+            <button type="button" id="cartBtn" class="p-2.5 sm:p-2 rounded-full hover:bg-white/30 transition-colors relative text-[#C86A8A] touch-manipulation" aria-label="Cart">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+              <span id="cartCount" class="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-4 h-4 rounded-full bg-[#C86A8A] text-white text-xs flex items-center justify-center">0</span>
+            </button>
+            <button type="button" id="navMenuToggle" class="md:hidden p-2.5 rounded-full hover:bg-white/30 transition-colors text-[#C86A8A] touch-manipulation" aria-label="Menu" aria-expanded="false">
+              <svg class="w-6 h-6 nav-menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              <svg class="w-6 h-6 nav-menu-close hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="navMobileMenu" class="md:hidden hidden absolute left-0 right-0 top-full mt-0 glass-strong border-t border-white/30 shadow-xl rounded-b-2xl overflow-hidden">
+          <div class="px-4 py-4 flex flex-col gap-1">
+            <button type="button" data-screen="home" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-white/40 text-[#C86A8A]">Shop</button>
+            <button type="button" data-screen="collections" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-white/40 text-[#C86A8A]">Collections</button>
+            <button type="button" data-screen="home" data-scroll="about" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-white/40 text-[#C86A8A]">About</button>
+            <button type="button" data-screen="home" data-scroll="footer" class="nav-mobile-link w-full text-left py-3 px-4 rounded-xl text-gray-700 font-medium hover:bg-white/40 text-[#C86A8A]">Contact</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HOME SCREEN -->
+    <div id="screenHome" class="screen">
+    <!-- Hero Section - Featured Products Carousel -->
+    <section class="relative pt-24 sm:pt-28 md:pt-32 pb-8 sm:pb-12 px-4 sm:px-6">
+      <div class="max-w-7xl mx-auto w-full">
+        <div class="text-center mb-6 sm:mb-8 fade-in">
+          <p class="text-xs sm:text-sm font-medium tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-2 text-[#C86A8A]">Featured Collection</p>
+          <h1 id="heroTitle" class="font-display text-3xl sm:text-4xl md:text-5xl font-semibold mb-3 sm:mb-4 text-[#C86A8A]">Premium Skincare</h1>
+          <p id="heroSubtitle" class="text-sm sm:text-base leading-relaxed max-w-2xl mx-auto text-gray-600 px-1">Discover our luxurious skincare collection crafted with the finest natural ingredients.</p>
+        </div>
+        <div class="relative mt-8 sm:mt-12">
+          <div class="product-carousel relative min-h-[340px] sm:min-h-[400px] md:min-h-[500px] flex items-center justify-center">
+            <!-- Product Cards -->
+            <div id="product0" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="0">
+              <div class="relative mb-4 rounded-2xl overflow-hidden bg-white">
+                <div class="shimmer absolute inset-0"></div>
+                <svg class="w-full h-44 sm:h-52 md:h-56 p-6 sm:p-8" viewBox="0 0 100 120">
+                  <defs>
+                    <linearGradient id="bottle1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#fce7f3" />
+                      <stop offset="100%" stop-color="#fbcfe8" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="35" y="10" width="30" height="15" rx="3" fill="#C86A8A" />
+                  <rect x="40" y="0" width="20" height="12" rx="2" fill="#f9a8d4" />
+                  <path d="M25 25 H75 L70 115 H30 Z" fill="url(#bottle1)" stroke="#f9a8d4" stroke-width="1" />
+                  <ellipse cx="50" cy="70" rx="15" ry="20" fill="#fdf2f8" opacity="0.5" />
+                </svg>
+              </div>
+              <span class="text-xs font-medium tracking-wider uppercase">New Arrival</span>
+              <h3 class="font-display text-2xl font-semibold mt-2">Rose Elixir Serum</h3>
+              <p class="text-sm mt-2 text-gray-600">Hydrating • Anti-aging • Radiance</p>
+            </div>
+            <div id="product1" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="1">
+              <div class="relative mb-4 rounded-2xl overflow-hidden bg-white">
+                <div class="shimmer absolute inset-0"></div>
+                <svg class="w-full h-44 sm:h-52 md:h-56 p-6 sm:p-8" viewBox="0 0 100 120">
+                  <defs>
+                    <linearGradient id="jar1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#d1fae5" />
+                      <stop offset="100%" stop-color="#a7f3d0" />
+                    </linearGradient>
+                  </defs>
+                  <ellipse cx="50" cy="25" rx="35" ry="10" fill="#86efac" />
+                  <rect x="15" y="25" width="70" height="70" rx="10" fill="url(#jar1)" stroke="#86efac" stroke-width="1" />
+                  <ellipse cx="50" cy="95" rx="35" ry="8" fill="#86efac" opacity="0.5" />
+                  <ellipse cx="50" cy="60" rx="20" ry="15" fill="#f0fdf4" opacity="0.4" />
+                </svg>
+              </div>
+              <span class="text-xs font-medium tracking-wider uppercase">Bestseller</span>
+              <h3 class="font-display text-2xl font-semibold mt-2">Green Tea Cream</h3>
+              <p class="text-sm mt-2 text-gray-600">Moisturizing • Soothing • Nourishing</p>
+            </div>
+            <div id="product2" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="2">
+              <div class="relative mb-4 rounded-2xl overflow-hidden bg-white">
+                <div class="shimmer absolute inset-0"></div>
+                <svg class="w-full h-44 sm:h-52 md:h-56 p-6 sm:p-8" viewBox="0 0 100 120">
+                  <defs>
+                    <linearGradient id="dropper1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#fef9c3" />
+                      <stop offset="100%" stop-color="#fde047" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="42" y="0" width="16" height="25" rx="3" fill="#fbbf24" />
+                  <ellipse cx="50" cy="28" rx="12" ry="5" fill="#f59e0b" />
+                  <path d="M35 30 H65 L60 110 Q50 120 40 110 Z" fill="url(#dropper1)" stroke="#fde047" stroke-width="1" />
+                  <ellipse cx="50" cy="70" rx="8" ry="25" fill="#fffbeb" opacity="0.5" />
+                </svg>
+              </div>
+              <span class="text-xs font-medium tracking-wider uppercase">Premium</span>
+              <h3 class="font-display text-2xl font-semibold mt-2">Vitamin C Drops</h3>
+              <p class="text-sm mt-2 text-gray-600">Brightening • Glow • Even Tone</p>
+            </div>
+            <div id="product3" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="3">
+              <div class="relative mb-4 rounded-2xl overflow-hidden bg-white">
+                <div class="shimmer absolute inset-0"></div>
+                <svg class="w-full h-44 sm:h-52 md:h-56 p-6 sm:p-8" viewBox="0 0 100 120">
+                  <defs>
+                    <linearGradient id="tube1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#e9d5ff" />
+                      <stop offset="100%" stop-color="#d8b4fe" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="35" y="0" width="30" height="20" rx="5" fill="#a78bfa" />
+                  <path d="M30 20 H70 V100 Q50 115 30 100 Z" fill="url(#tube1)" stroke="#c4b5fd" stroke-width="1" />
+                  <rect x="30" y="35" width="40" height="3" fill="#a78bfa" opacity="0.5" />
+                  <rect x="30" y="42" width="40" height="3" fill="#a78bfa" opacity="0.3" />
+                </svg>
+              </div>
+              <span class="text-xs font-medium tracking-wider uppercase">Featured</span>
+              <h3 class="font-display text-2xl font-semibold mt-2">Lavender Cleanser</h3>
+              <p class="text-sm mt-2 text-gray-600">Gentle • Calming • Deep Clean</p>
+            </div>
+            <div id="product4" class="product-card absolute glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-64 sm:w-72 cursor-pointer hover:shadow-2xl text-[#C86A8A]" data-index="4">
+              <div class="relative mb-4 rounded-2xl overflow-hidden bg-white">
+                <div class="shimmer absolute inset-0"></div>
+                <svg class="w-full h-44 sm:h-52 md:h-56 p-6 sm:p-8" viewBox="0 0 100 120">
+                  <defs>
+                    <linearGradient id="mist1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#fecdd3" />
+                      <stop offset="100%" stop-color="#fda4af" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="38" y="0" width="24" height="18" rx="4" fill="#fb7185" />
+                  <ellipse cx="50" cy="20" rx="18" ry="6" fill="#f43f5e" />
+                  <rect x="28" y="25" width="44" height="85" rx="8" fill="url(#mist1)" stroke="#fecdd3" stroke-width="1" />
+                  <ellipse cx="50" cy="65" rx="12" ry="25" fill="#fff1f2" opacity="0.4" />
+                </svg>
+              </div>
+              <span class="text-xs font-medium tracking-wider uppercase">Popular</span>
+              <h3 class="font-display text-2xl font-semibold mt-2">Rose Mist Toner</h3>
+              <p class="text-sm mt-2 text-gray-600">Refreshing • Balancing • Hydrating</p>
+            </div>
+          </div>
+          <!-- Carousel Controls: arrows only -->
+          <div class="flex items-center justify-center gap-4 sm:gap-6 mt-6 sm:mt-8">
+            <button type="button" id="prevBtn" class="glass w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all hover:bg-white/40 active:scale-95 text-[#C86A8A] touch-manipulation" aria-label="Previous">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button type="button" id="nextBtn" class="glass w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all hover:bg-white/40 active:scale-95 text-[#C86A8A] touch-manipulation" aria-label="Next">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Grid Section -->
+    <section id="products" class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-gray-50">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-8 sm:mb-12">
+          <h2 class="font-display text-3xl sm:text-4xl font-semibold mb-3 sm:mb-4 text-[#C86A8A]">Our Products</h2>
+          <p class="text-sm sm:text-base text-gray-600">Premium skincare solutions for your beauty routine</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8" id="productsGrid">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="about" class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-white">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
+          <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center transition-transform hover:scale-105 shadow-md border border-gray-100">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center bg-pink-100">
+              <svg class="w-7 h-7 sm:w-8 sm:h-8 text-[#C86A8A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <h3 class="font-display text-lg sm:text-xl font-semibold mb-2 text-[#C86A8A]">100% Natural</h3>
+            <p class="text-sm text-gray-600">Pure ingredients sourced from nature for gentle, effective skincare.</p>
+          </div>
+          <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center transition-transform hover:scale-105 shadow-md border border-gray-100">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center bg-pink-100">
+              <svg class="w-7 h-7 sm:w-8 sm:h-8 text-[#C86A8A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </div>
+            <h3 class="font-display text-lg sm:text-xl font-semibold mb-2 text-[#C86A8A]">Cruelty Free</h3>
+            <p class="text-sm text-gray-600">Never tested on animals. Beauty with compassion.</p>
+          </div>
+          <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center transition-transform hover:scale-105 shadow-md border border-gray-100">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center bg-pink-100">
+              <svg class="w-7 h-7 sm:w-8 sm:h-8 text-[#C86A8A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+            </div>
+            <h3 class="font-display text-lg sm:text-xl font-semibold mb-2 text-[#C86A8A]">Derma Tested</h3>
+            <p class="text-sm text-gray-600">Clinically tested formulas safe for all skin types.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer with contact details -->
+    <footer id="footer" class="glass-strong py-10 sm:py-14 md:py-16 px-4 sm:px-6 mt-auto bg-gray-50 pb-[env(safe-area-inset-bottom)]">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-8 sm:mb-10">
+          <div class="flex items-center space-x-2">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-[#C86A8A] flex-shrink-0" viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1.5" />
+              <path d="M20 8c0 12-8 16-8 22a8 8 0 1016 0c0-6-8-10-8-22z" fill="currentColor" opacity="0.6" />
+            </svg>
+            <span class="font-display text-base sm:text-lg font-semibold text-[#C86A8A]">SHUSHI PRODUCTS</span>
+          </div>
+          <div>
+            <h4 class="font-display font-semibold text-[#C86A8A] text-sm uppercase tracking-wider mb-3">Contact</h4>
+            <a href="mailto:shushiproduct@gmail.com" class="flex items-center gap-2 text-sm text-gray-600 hover:text-[#C86A8A] transition-colors mb-2 break-all">
+              <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+              shushiproduct@gmail.com
+            </a>
+            <a href="tel:+255742717777" class="flex items-center gap-2 text-sm text-gray-600 hover:text-[#C86A8A] transition-colors mb-2">
+              <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+              +255 742 717 777
+            </a>
+            <p class="flex items-start gap-2 text-sm text-gray-600 mt-2">
+              <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              <span>Dar es Salaam, Tanzania</span>
+            </p>
+          </div>
+          <div>
+            <h4 class="font-display font-semibold text-[#C86A8A] text-sm uppercase tracking-wider mb-3">Quick links</h4>
+            <a href="#products" class="block text-sm text-gray-600 hover:text-[#C86A8A] transition-colors mb-2 py-1">Shop</a>
+            <a href="#" class="block text-sm text-gray-600 hover:text-[#C86A8A] transition-colors mb-2 py-1">Privacy</a>
+            <a href="#" class="block text-sm text-gray-600 hover:text-[#C86A8A] transition-colors mb-2 py-1">Terms</a>
+          </div>
+        </div>
+        <div class="border-t border-gray-200 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p class="text-xs sm:text-sm text-gray-500 text-center sm:text-left">© 2025 Shushi Products. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+    </div>
+    <!-- END HOME SCREEN -->
+
+    <!-- COLLECTIONS SCREEN (separate page) -->
+    <div id="screenCollections" class="screen hidden min-h-screen bg-gray-50">
+      <div class="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
+        <div class="max-w-6xl mx-auto">
+          <div id="collectionsScreenContent" class="space-y-12">
+            <!-- Filled by JS: each set has a slider of product images with labels -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCT DETAIL SCREEN (separate page) -->
+    <div id="screenProduct" class="screen hidden min-h-screen bg-gray-50">
+      <div class="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
+        <div class="max-w-6xl mx-auto">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-10 mb-10 sm:mb-16">
+            <div id="detailImage" class="relative rounded-xl overflow-hidden bg-gray-50 aspect-square min-h-[260px] sm:min-h-[320px] w-full product-box-shadow"></div>
+            <div class="min-w-0">
+              <h1 id="detailTitle" class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold mb-3 sm:mb-4 text-[#C86A8A]">Product Name</h1>
+              <p id="detailDescription" class="text-sm sm:text-base mb-4 sm:mb-6 leading-relaxed text-gray-600"></p>
+              <div class="mb-4 sm:mb-6">
+                <h3 class="font-semibold mb-2 text-[#C86A8A] text-sm sm:text-base">Key Benefits</h3>
+                <ul id="detailBenefits" class="space-y-1.5 sm:space-y-2 text-sm sm:text-base"></ul>
+              </div>
+              <div class="mb-4 sm:mb-6">
+                <h3 class="font-semibold mb-2 text-[#C86A8A] text-sm sm:text-base">How to Use</h3>
+                <p id="detailHowTo" class="text-sm text-gray-600"></p>
+              </div>
+              <div class="border-t border-gray-200 pt-4 sm:pt-6">
+                <div class="flex items-center justify-between mb-4 sm:mb-6">
+                  <span id="detailPrice" class="font-semibold text-2xl sm:text-3xl text-[#C86A8A]">TSh 0</span>
+                  <span id="detailCapacity" class="text-sm text-gray-600">50ml</span>
+                </div>
+                <button type="button" id="detailAddToCart" class="w-full py-3.5 sm:py-4 rounded-full text-white font-semibold text-base sm:text-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] bg-[#C86A8A] touch-manipulation">Add to Cart</button>
+              </div>
+            </div>
+          </div>
+          <div class="border-t border-gray-200 pt-8 sm:pt-12">
+            <h2 class="font-display text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-[#C86A8A]">Similar products</h2>
+            <div id="similarProducts" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Drawer (outside screens so it opens from any page) -->
+    <div id="cartOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    <aside id="cartDrawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col transform translate-x-full transition-transform duration-300 ease-out max-h-[100dvh] max-h-[100vh]">
+      <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 shrink-0">
+        <h2 class="font-display text-lg sm:text-xl font-semibold text-[#C86A8A]">Your Cart</h2>
+        <button type="button" id="closeCart" class="p-2.5 rounded-full hover:bg-gray-100 text-gray-600 touch-manipulation" aria-label="Close cart">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <div id="cartItems" class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 min-h-0"></div>
+      <div class="border-t border-gray-200 p-4 sm:p-6 space-y-3 shrink-0 pb-[env(safe-area-inset-bottom)]">
+        <div class="flex justify-between text-sm sm:text-base text-gray-600"><span>Subtotal</span><span id="cartSubtotal">TSh 0</span></div>
+        <div class="flex justify-between font-semibold text-base sm:text-lg text-[#C86A8A]"><span>Total</span><span id="cartTotal">TSh 0</span></div>
+        <button type="button" id="cartCheckout" class="w-full py-3.5 sm:py-4 rounded-full text-white font-semibold text-base sm:text-lg bg-[#C86A8A] hover:opacity-90 active:opacity-95 transition-opacity touch-manipulation">Checkout</button>
+      </div>
+    </aside>
+
+  </div>
+
+  <script>
+    const PRIMARY = '#C86A8A';
+
+    const products = [
+      { name: 'Rose Elixir Serum', capacity: '30ml', price: 'TSh 250,000', priceValue: 250000, category: 'serum', description: 'Our signature Rose Elixir Serum combines advanced hydrating technology with the essence of pure rose extract. This luxurious formula penetrates deep into the skin to deliver intense moisture while fighting signs of aging. Perfect for daily use on all skin types.', benefits: ['Deep hydration for up to 24 hours', 'Reduces fine lines and wrinkles', 'Improves skin elasticity and firmness', 'Natural rose extract for radiance'], howTo: 'Apply 2-3 drops to clean, dry face morning and evening. Gently massage in upward circular motions until fully absorbed. Follow with your favorite moisturizer.', imageClass: 'from-pink-50 to-pink-100', svg: `<svg class="w-full h-64 p-12" viewBox="0 0 100 120"><defs><linearGradient id="p1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fce7f3"/><stop offset="100%" stop-color="#fbcfe8"/></linearGradient></defs><rect x="35" y="10" width="30" height="15" rx="3" fill="#C86A8A"/><rect x="40" y="0" width="20" height="12" rx="2" fill="#f9a8d4"/><path d="M25 25 H75 L70 115 H30 Z" fill="url(#p1)" stroke="#f9a8d4" stroke-width="1"/><ellipse cx="50" cy="70" rx="15" ry="20" fill="#fdf2f8" opacity="0.5"/></svg>` },
+      { name: 'Green Tea Cream', capacity: '50ml', price: 'TSh 185,000', priceValue: 185000, category: 'cream', description: 'Infused with antioxidant-rich green tea extract, this nourishing cream provides deep moisturization while protecting your skin from environmental stressors. Its lightweight formula absorbs quickly, leaving skin soft and supple without greasiness.', benefits: ['Powerful antioxidant protection', 'Soothes irritated skin', 'Lightweight, non-greasy formula', 'Suitable for sensitive skin'], howTo: 'Apply a generous amount to face and neck after cleansing and toning. Massage gently until absorbed. Use morning and night for best results.', imageClass: 'from-green-50 to-green-100', svg: `<svg class="w-full h-64 p-12" viewBox="0 0 100 120"><defs><linearGradient id="p2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#d1fae5"/><stop offset="100%" stop-color="#a7f3d0"/></linearGradient></defs><ellipse cx="50" cy="25" rx="35" ry="10" fill="#86efac"/><rect x="15" y="25" width="70" height="70" rx="10" fill="url(#p2)" stroke="#86efac" stroke-width="1"/><ellipse cx="50" cy="95" rx="35" ry="8" fill="#86efac" opacity="0.5"/><ellipse cx="50" cy="60" rx="20" ry="15" fill="#f0fdf4" opacity="0.4"/></svg>` },
+      { name: 'Vitamin C Drops', capacity: '30ml', price: 'TSh 215,000', priceValue: 215000, category: 'serum', description: 'This concentrated Vitamin C serum brightens dull skin and evens out skin tone for a radiant, luminous complexion. The stable formula delivers powerful antioxidants to protect against free radicals and boost collagen production.', benefits: ['Brightens and evens skin tone', 'Boosts natural collagen production', 'Protects against environmental damage', 'Reduces dark spots and hyperpigmentation'], howTo: 'Apply 3-4 drops to clean skin before moisturizer. Use in the morning for daytime protection. May cause slight tingling - this is normal. Always use SPF during the day.', imageClass: 'from-yellow-50 to-yellow-200', svg: `<svg class="w-full h-64 p-12" viewBox="0 0 100 120"><defs><linearGradient id="p3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef9c3"/><stop offset="100%" stop-color="#fde047"/></linearGradient></defs><rect x="42" y="0" width="16" height="25" rx="3" fill="#fbbf24"/><ellipse cx="50" cy="28" rx="12" ry="5" fill="#f59e0b"/><path d="M35 30 H65 L60 110 Q50 120 40 110 Z" fill="url(#p3)" stroke="#fde047" stroke-width="1"/><ellipse cx="50" cy="70" rx="8" ry="25" fill="#fffbeb" opacity="0.5"/></svg>` },
+      { name: 'Lavender Cleanser', capacity: '150ml', price: 'TSh 125,000', priceValue: 125000, category: 'cleanser', description: 'Begin your skincare routine with our gentle Lavender Cleanser. Enriched with calming lavender essential oil, this creamy cleanser removes impurities and makeup while maintaining your skin\'s natural moisture balance.', benefits: ['Gentle daily cleansing', 'Calms and soothes skin', 'Removes makeup and impurities', 'Maintains skin\'s pH balance'], howTo: 'Wet face with lukewarm water. Apply a small amount and massage in circular motions for 30-60 seconds. Rinse thoroughly and pat dry. Use morning and evening.', imageClass: 'from-violet-100 to-violet-200', svg: `<svg class="w-full h-64 p-12" viewBox="0 0 100 120"><defs><linearGradient id="p4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e9d5ff"/><stop offset="100%" stop-color="#d8b4fe"/></linearGradient></defs><rect x="35" y="0" width="30" height="20" rx="5" fill="#a78bfa"/><path d="M30 20 H70 V100 Q50 115 30 100 Z" fill="url(#p4)" stroke="#c4b5fd" stroke-width="1"/><rect x="30" y="35" width="40" height="3" fill="#a78bfa" opacity="0.5"/><rect x="30" y="42" width="40" height="3" fill="#a78bfa" opacity="0.3"/></svg>` },
+      { name: 'Rose Mist Toner', capacity: '100ml', price: 'TSh 95,000', priceValue: 95000, category: 'toner', description: 'Refresh and revitalize your skin with our Rose Mist Toner. This hydrating facial mist balances skin pH, tightens pores, and provides an instant boost of hydration. Perfect for use throughout the day for a quick refresh.', benefits: ['Balances skin pH levels', 'Hydrates and refreshes instantly', 'Tightens and minimizes pores', 'Sets makeup beautifully'], howTo: 'Hold bottle 8-10 inches from face and mist evenly. Use after cleansing or anytime skin needs refreshing. Can be used over makeup. Allow to air dry or gently pat in.', imageClass: 'from-rose-50 to-rose-200', svg: `<svg class="w-full h-64 p-12" viewBox="0 0 100 120"><defs><linearGradient id="p5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fecdd3"/><stop offset="100%" stop-color="#fda4af"/></linearGradient></defs><rect x="38" y="0" width="24" height="18" rx="4" fill="#fb7185"/><ellipse cx="50" cy="20" rx="18" ry="6" fill="#f43f5e"/><rect x="28" y="25" width="44" height="85" rx="8" fill="url(#p5)" stroke="#fecdd3" stroke-width="1"/><ellipse cx="50" cy="65" rx="12" ry="25" fill="#fff1f2" opacity="0.4"/></svg>` },
+      { name: 'Honey Glow Mask', capacity: '75ml', price: 'TSh 165,000', priceValue: 165000, category: 'mask', description: 'Treat your skin to our intensive Honey Glow Mask. Formulated with natural honey and nourishing botanicals, this weekly treatment deeply hydrates and illuminates skin for a healthy, glowing complexion.', benefits: ['Intensive weekly hydration treatment', 'Natural honey for antibacterial benefits', 'Illuminates and brightens complexion', 'Softens and smooths skin texture'], howTo: 'Apply a generous layer to clean, dry face avoiding eye area. Leave on for 15-20 minutes. Rinse with warm water and pat dry. Use 2-3 times weekly for best results.', imageClass: 'from-amber-50 to-amber-100', svg: `<svg class="w-full h-64 p-12" viewBox="0 0 100 120"><defs><linearGradient id="p6" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef3c7"/><stop offset="100%" stop-color="#fcd34d"/></linearGradient></defs><ellipse cx="50" cy="20" rx="28" ry="8" fill="#fbbf24"/><rect x="22" y="20" width="56" height="85" rx="8" fill="url(#p6)" stroke="#fcd34d" stroke-width="1"/><ellipse cx="50" cy="105" rx="28" ry="8" fill="#fbbf24" opacity="0.6"/><circle cx="50" cy="60" r="15" fill="#fef3c7" opacity="0.5"/></svg>` }
+    ];
+
+    const collections = [
+      { name: 'Starter Set', description: 'Cleanser, Toner & Serum — perfect intro', productIndices: [3, 4, 0], totalPrice: 470000 },
+      { name: 'Glow Routine', description: 'Serum, Vitamin C & Cream for radiant skin', productIndices: [0, 2, 1], totalPrice: 650000 },
+      { name: 'Complete Collection', description: 'All 6 products — full skincare routine', productIndices: [0, 1, 2, 3, 4, 5], totalPrice: 1035000 }
+    ];
+
+    let currentIndex = 0;
+    const totalCarousel = 5;
+    const autoSlideDelay = 4500;
+    let autoSlideInterval;
+    let cart = []; // { productIndex, qty }
+    let searchQuery = '';
+    let currentScreen = 'home';
+    let previousScreen = 'home';
+    let currentProductIndex = 0;
+    let screenHistory = [{ screen: 'home' }];
+    let screenHistoryIndex = 0;
+
+    function formatPrice(n) {
+      return 'TSh ' + Number(n).toLocaleString();
+    }
+
+    function uniqueSvg(svgStr, index, suffix) {
+      const id = 'p' + (index + 1);
+      const s = suffix !== undefined ? String(suffix) : String(index);
+      return svgStr.replace(new RegExp(`id="${id}"`, 'g'), `id="${id}-${s}"`).replace(new RegExp(`url\\(#${id}\\)`, 'g'), `url(#${id}-${s})`);
+    }
+
+    /** Product image only (no default icons). Image covers the box perfectly (object-fit: cover), modern full-bleed. */
+    function productImageHtml(productIndex, name) {
+      const alt = (name || '').replace(/"/g, '&quot;');
+      return `<img src="images/product-${productIndex}.png" alt="${alt}" class="product-img" onerror="this.onerror=null;this.style.display='none';var p=this.nextElementSibling;if(p)p.classList.remove('hidden');"><div class="product-img-placeholder hidden absolute inset-0 bg-gray-50"></div>`;
+    }
+
+    function getSimilarProducts(productIndex, limit) {
+      const p = products[productIndex];
+      const category = p.category;
+      return products
+        .map((pr, i) => ({ ...pr, index: i }))
+        .filter((pr, i) => i !== productIndex && (pr.category === category || ['serum', 'cream'].includes(pr.category)))
+        .slice(0, limit);
+    }
+
+    function renderProductsGrid(filter) {
+      const grid = document.getElementById('productsGrid');
+      if (!grid) return;
+      const list = filter ? products.filter((p, i) => p.name.toLowerCase().includes(filter) || p.description.toLowerCase().includes(filter) || (p.category && p.category.toLowerCase().includes(filter))) : products;
+      const indices = list.map((p, i) => products.indexOf(p));
+      grid.innerHTML = list.length ? list.map((p, ii) => {
+        const i = indices[ii];
+        return `
+        <div class="bg-white rounded-xl overflow-hidden product-box-shadow transition-shadow duration-300 cursor-pointer product-item border border-gray-100" data-product="${i}">
+          <div class="relative overflow-hidden bg-gray-50 aspect-square rounded-t-xl">
+            <div class="absolute inset-0 product-img-box">${productImageHtml(i, p.name)}</div>
+          </div>
+          <div class="p-4 sm:p-6">
+            <h3 class="font-display text-lg sm:text-xl font-semibold mb-2 text-[#C86A8A]">${p.name}</h3>
+            <p class="text-xs sm:text-sm mb-3 sm:mb-4 text-gray-600 line-clamp-2">${p.description.slice(0, 80)}…</p>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <span class="font-semibold text-xl sm:text-2xl text-[#C86A8A]">${p.price}</span>
+              <button type="button" class="px-4 py-2 rounded-full text-white text-sm font-medium transition-all hover:scale-105 active:scale-95 bg-[#C86A8A] view-details-btn touch-manipulation w-full sm:w-auto">View Details</button>
+            </div>
+          </div>
+        </div>
+      `;
+      }).join('') : '<p class="col-span-full text-center text-gray-500 py-8">No products match your search.</p>';
+      document.querySelectorAll('.product-item').forEach(el => {
+        el.addEventListener('click', () => showProductDetail(parseInt(el.dataset.product)));
+      });
+    }
+
+    function closeNavMobileMenu() {
+      const menu = document.getElementById('navMobileMenu');
+      const toggle = document.getElementById('navMenuToggle');
+      const icon = toggle && toggle.querySelector('.nav-menu-icon');
+      const closeIcon = toggle && toggle.querySelector('.nav-menu-close');
+      if (menu) menu.classList.add('hidden');
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
+      if (icon) icon.classList.remove('hidden');
+      if (closeIcon) closeIcon.classList.add('hidden');
+    }
+
+    function showScreen(screen, productIndex, fromHistory) {
+      closeNavMobileMenu();
+      document.getElementById('screenHome').classList.add('hidden');
+      document.getElementById('screenCollections').classList.add('hidden');
+      document.getElementById('screenProduct').classList.add('hidden');
+      previousScreen = currentScreen;
+      currentScreen = screen;
+      if (!fromHistory) {
+        screenHistory = screenHistory.slice(0, screenHistoryIndex + 1);
+        screenHistory.push(screen === 'product' && typeof productIndex === 'number' ? { screen: 'product', productIndex } : { screen });
+        screenHistoryIndex = screenHistory.length - 1;
+      }
+      if (screen === 'home') {
+        document.getElementById('screenHome').classList.remove('hidden');
+        if (typeof productIndex === 'string') setTimeout(() => document.getElementById(productIndex)?.scrollIntoView({ behavior: 'smooth' }), 150);
+      } else if (screen === 'collections') {
+        document.getElementById('screenCollections').classList.remove('hidden');
+        renderCollectionsScreen();
+      } else if (screen === 'product' && typeof productIndex === 'number') {
+        currentProductIndex = productIndex;
+        document.getElementById('screenProduct').classList.remove('hidden');
+        showProductDetailContent(productIndex);
+      }
+    }
+
+    function goBack() {
+      if (screenHistoryIndex <= 0) return;
+      screenHistoryIndex--;
+      const entry = screenHistory[screenHistoryIndex];
+      if (entry.screen === 'home') showScreen('home', undefined, true);
+      else if (entry.screen === 'collections') showScreen('collections', undefined, true);
+      else if (entry.screen === 'product') showScreen('product', entry.productIndex, true);
+    }
+
+    function goForward() {
+      if (screenHistoryIndex >= screenHistory.length - 1) return;
+      screenHistoryIndex++;
+      const entry = screenHistory[screenHistoryIndex];
+      if (entry.screen === 'home') showScreen('home', undefined, true);
+      else if (entry.screen === 'collections') showScreen('collections', undefined, true);
+      else if (entry.screen === 'product') showScreen('product', entry.productIndex, true);
+    }
+
+    let setCarouselIndex = {}; // { collectionIndex: slideIndex }
+
+    function renderCollectionsScreen() {
+      const container = document.getElementById('collectionsScreenContent');
+      if (!container) return;
+      const cardsHtml = collections.map((col, ci) => {
+        const items = col.productIndices.map(i => ({ ...products[i], index: i }));
+        const totalFormatted = formatPrice(col.totalPrice);
+        setCarouselIndex[ci] = 0;
+        const slides = items.map((p, si) => {
+          const features = (p.benefits || []).slice(0, 3);
+          const cap = p.capacity || '50ml';
+          return `
+          <div class="set-carousel-slide" data-set="${ci}" data-slide="${si}">
+            <div class="set-slide-card relative h-full w-full rounded-t-xl overflow-hidden">
+              <div class="set-slide-image-wrap rounded-t-xl">
+                <div class="absolute inset-0 w-full h-full">${productImageHtml(p.index, p.name)}</div>
+              </div>
+              <button type="button" class="set-slide-details-tab" aria-label="Show details">Details</button>
+              <div class="set-slide-details-panel">
+                <button type="button" class="close-btn set-details-close" aria-label="Close"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+                <span class="panel-heading">Key features</span>
+                <div class="panel-line"></div>
+                <div class="detail-row"><span class="detail-label">Size</span><span class="detail-value">${cap}</span></div>
+                <div class="detail-row"><span class="detail-label">Product</span><span class="detail-value">${p.name}</span></div>
+                <ul class="features">${features.map(f => `<li>• ${f}</li>`).join('')}</ul>
+              </div>
+            </div>
+          </div>
+          `;
+        }).join('');
+        return `
+        <div class="bg-white rounded-xl overflow-hidden product-box-shadow border border-gray-100 flex flex-col" data-collection="${ci}">
+          <div class="set-carousel-view relative overflow-hidden bg-gray-50 cursor-grab active:cursor-grabbing flex-shrink-0 rounded-t-xl" data-set="${ci}">
+            <div class="set-carousel-track set-track-${ci} w-full h-full" data-set="${ci}" style="transform: translateX(0%);">
+              ${slides}
+            </div>
+          </div>
+          <div class="p-4 sm:p-5 flex-1 flex flex-col">
+            <h3 class="font-display text-lg font-semibold mb-1 text-[#C86A8A]">${col.name}</h3>
+            <p class="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-2">${col.description}</p>
+            <p class="text-xs text-gray-500 mb-2 mt-auto">Contains: ${items.map(p => p.name).join(', ')}</p>
+            <div class="flex items-center justify-between mt-2">
+              <span class="font-semibold text-[#C86A8A]">${totalFormatted}</span>
+              <span class="text-xs text-gray-500">${items.length} items</span>
+            </div>
+            <button type="button" class="mt-4 w-full py-3 rounded-full text-white text-sm font-medium bg-[#C86A8A] hover:opacity-90 add-collection-btn transition-opacity" data-collection="${ci}">Add set to cart</button>
+          </div>
+        </div>
+        `;
+      }).join('');
+      container.innerHTML = '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">' + cardsHtml + '</div>';
+      container.querySelectorAll('.add-collection-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const ci = parseInt(btn.dataset.collection);
+          addCollectionToCart(ci);
+        });
+      });
+      container.querySelectorAll('.set-slide-details-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const card = tab.closest('.set-slide-card');
+          if (card) card.classList.toggle('details-open');
+        });
+      });
+      container.querySelectorAll('.set-details-close').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const card = btn.closest('.set-slide-card');
+          if (card) card.classList.remove('details-open');
+        });
+      });
+      setCarouselTouch(container);
+      setCarouselMouse(container);
+    }
+
+    function moveSetCarousel(ci, delta) {
+      const col = collections[ci];
+      const n = col.productIndices.length;
+      if (n <= 1) return;
+      const container = document.getElementById('collectionsScreenContent');
+      if (container) container.querySelectorAll('.set-slide-card.details-open').forEach(c => c.classList.remove('details-open'));
+      setCarouselIndex[ci] = (setCarouselIndex[ci] + delta + n) % n;
+      const track = document.querySelector('.set-track-' + ci);
+      if (track) track.style.transform = 'translateX(-' + (setCarouselIndex[ci] * 100) + '%)';
+    }
+
+    function setCarouselTouch(container) {
+      if (!container) return;
+      let startX = 0;
+      let touchSet = null;
+      let viewRect = null;
+      container.addEventListener('touchstart', e => {
+        if (e.target.closest('.set-slide-details-panel') || e.target.closest('.set-slide-details-tab')) return;
+        const view = e.target.closest('.set-carousel-view');
+        if (view) {
+          startX = e.touches[0].clientX;
+          touchSet = parseInt(view.dataset.set);
+          viewRect = view.getBoundingClientRect();
+        }
+      }, { passive: true });
+      container.addEventListener('touchend', e => {
+        const view = e.target.closest('.set-carousel-view');
+        if (view && touchSet !== null && viewRect) {
+          const dx = e.changedTouches[0].clientX - startX;
+          const ci = touchSet;
+          const slideEl = container.querySelector('.set-carousel-slide[data-set="' + ci + '"][data-slide="' + setCarouselIndex[ci] + '"]');
+          const card = slideEl && slideEl.querySelector('.set-slide-card');
+          const startInLeftQuarter = startX <= viewRect.left + viewRect.width * 0.25;
+          if (card && Math.abs(dx) > 45) {
+            if (startInLeftQuarter && dx > 45 && !card.classList.contains('details-open')) {
+              card.classList.add('details-open');
+              touchSet = null;
+              viewRect = null;
+              return;
+            }
+            if (card.classList.contains('details-open') && dx < -45) {
+              card.classList.remove('details-open');
+              touchSet = null;
+              viewRect = null;
+              return;
+            }
+          }
+          if (Math.abs(dx) > 40) moveSetCarousel(ci, dx > 0 ? -1 : 1);
+          touchSet = null;
+          viewRect = null;
+        }
+      }, { passive: true });
+    }
+
+    function setCarouselMouse(container) {
+      if (!container) return;
+      let startX = 0;
+      let mouseSet = null;
+      container.addEventListener('mousedown', e => {
+        if (e.target.closest('.set-slide-details-panel') || e.target.closest('.set-slide-details-tab')) return;
+        const view = e.target.closest('.set-carousel-view');
+        if (view) {
+          startX = e.clientX;
+          mouseSet = parseInt(view.dataset.set);
+        }
+      });
+      container.addEventListener('mouseup', e => {
+        const view = e.target.closest('.set-carousel-view');
+        if (view && mouseSet !== null) {
+          const dx = e.clientX - startX;
+          if (Math.abs(dx) > 40) moveSetCarousel(mouseSet, dx > 0 ? -1 : 1);
+          mouseSet = null;
+        }
+      });
+      container.addEventListener('mouseleave', () => { mouseSet = null; });
+    }
+
+    function updateCarousel() {
+      const cards = document.querySelectorAll('.product-card');
+      cards.forEach((card, index) => {
+        card.classList.remove('active', 'prev', 'next', 'hidden-left', 'hidden-right');
+        const diff = index - currentIndex;
+        const normalizedDiff = ((diff + totalCarousel) % totalCarousel);
+        if (index === currentIndex) card.classList.add('active');
+        else if (normalizedDiff === totalCarousel - 1 || diff === -1) card.classList.add('prev');
+        else if (normalizedDiff === 1 || diff === 1) card.classList.add('next');
+        else if (normalizedDiff < totalCarousel / 2) card.classList.add('hidden-right');
+        else card.classList.add('hidden-left');
+      });
+    }
+
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % totalCarousel;
+      updateCarousel();
+      resetAutoSlide();
+    }
+
+    function prevSlide() {
+      currentIndex = (currentIndex - 1 + totalCarousel) % totalCarousel;
+      updateCarousel();
+      resetAutoSlide();
+    }
+
+    function goToSlide(index) {
+      currentIndex = index;
+      updateCarousel();
+      resetAutoSlide();
+    }
+
+    function resetAutoSlide() {
+      clearInterval(autoSlideInterval);
+      autoSlideInterval = setInterval(nextSlide, autoSlideDelay);
+    }
+
+    (function carouselTouch() {
+      const area = document.querySelector('.product-carousel');
+      if (!area) return;
+      let startX = 0;
+      area.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+      area.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 50) dx > 0 ? prevSlide() : nextSlide();
+      }, { passive: true });
+    })();
+
+    function showProductDetail(productIndex) {
+      showScreen('product', productIndex);
+    }
+
+    function showProductDetailContent(productIndex) {
+      const product = products[productIndex];
+      document.getElementById('detailTitle').textContent = product.name;
+      document.getElementById('detailDescription').textContent = product.description;
+      document.getElementById('detailPrice').textContent = product.price;
+      document.getElementById('detailCapacity').textContent = product.capacity || '50ml';
+      document.getElementById('detailHowTo').textContent = product.howTo;
+      document.getElementById('detailBenefits').innerHTML = product.benefits.map(b => `
+        <li class="flex items-start gap-2">
+          <svg class="w-5 h-5 mt-0.5 flex-shrink-0 text-[#C86A8A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <span class="text-sm text-gray-600">${b}</span>
+        </li>
+      `).join('');
+      const detailSvg = product.svg.replace(/id="(p\d+)"/g, 'id="detail-$1"').replace(/url\(#(p\d+)\)/g, 'url(#detail-$1)');
+      const detailEl = document.getElementById('detailImage');
+      detailEl.innerHTML = '<div class="absolute inset-0 product-img-box">' + productImageHtml(productIndex, product.name) + '</div>';
+      document.getElementById('detailAddToCart').onclick = () => addToCart(productIndex);
+      const similar = getSimilarProducts(productIndex, 3);
+      const similarEl = document.getElementById('similarProducts');
+      similarEl.innerHTML = similar.map((p, ii) => {
+        const i = p.index;
+        return `
+        <div class="bg-white rounded-xl overflow-hidden product-box-shadow border border-gray-100 cursor-pointer product-item" data-product="${i}">
+          <div class="relative bg-gray-50 aspect-square overflow-hidden rounded-t-xl"><div class="absolute inset-0 product-img-box">${productImageHtml(i, p.name)}</div></div>
+          <div class="p-4">
+            <h4 class="font-display font-semibold text-[#C86A8A]">${p.name}</h4>
+            <p class="text-sm text-gray-600">${p.price}</p>
+            <button type="button" class="mt-2 w-full py-2 rounded-full text-white text-sm bg-[#C86A8A] similar-add" data-product="${i}">Add to cart</button>
+          </div>
+        </div>
+      `;
+      }).join('');
+      similarEl.querySelectorAll('.similar-add').forEach(btn => {
+        btn.addEventListener('click', e => { e.stopPropagation(); addToCart(parseInt(btn.dataset.product)); });
+      });
+      similarEl.querySelectorAll('.product-item').forEach(el => {
+        el.addEventListener('click', e => { if (!e.target.closest('.similar-add')) showProductDetail(parseInt(el.dataset.product)); });
+      });
+    }
+
+
+    function openCart() {
+      document.getElementById('cartDrawer').classList.add('open');
+      document.getElementById('cartOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      renderCart();
+    }
+
+    function closeCart() {
+      document.getElementById('cartDrawer').classList.remove('open');
+      document.getElementById('cartOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cartItems');
+      let subtotal = 0;
+      const byProduct = {};
+      const byCollection = {};
+      cart.forEach(item => {
+        if (item.productIndex !== undefined) {
+          byProduct[item.productIndex] = (byProduct[item.productIndex] || 0) + item.qty;
+        } else {
+          byCollection[item.collectionIndex] = (byCollection[item.collectionIndex] || 0) + item.qty;
+        }
+      });
+      const productEntries = Object.entries(byProduct);
+      const collectionEntries = Object.entries(byCollection);
+      const hasItems = productEntries.length > 0 || collectionEntries.length > 0;
+      const productLines = productEntries.map(([productIndex, qty], ci) => {
+        const p = products[parseInt(productIndex)];
+        const lineTotal = p.priceValue * qty;
+        subtotal += lineTotal;
+        return `
+        <div class="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-4 py-3 sm:py-4 border-b border-gray-100 cart-line" data-product="${productIndex}">
+          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-gray-50 flex-shrink-0 overflow-hidden relative product-box-shadow"><div class="absolute inset-0 product-img-box">${productImageHtml(parseInt(productIndex), p.name)}</div></div>
+          <div class="flex-1 min-w-0">
+            <h4 class="font-semibold text-[#C86A8A] truncate text-sm sm:text-base">${p.name}</h4>
+            <p class="text-xs sm:text-sm text-gray-600">${p.price} × ${qty}</p>
+            <p class="font-medium text-gray-800 text-sm sm:text-base">${formatPrice(lineTotal)}</p>
+          </div>
+          <div class="flex items-center gap-1 w-full sm:w-auto justify-end sm:justify-start">
+            <button type="button" class="cart-qty-minus w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600" data-product="${productIndex}">−</button>
+            <span class="w-6 text-center text-sm">${qty}</span>
+            <button type="button" class="cart-qty-plus w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600" data-product="${productIndex}">+</button>
+            <button type="button" class="cart-remove w-8 h-8 rounded-full hover:bg-red-50 text-red-500 ml-1" data-product="${productIndex}" aria-label="Remove">×</button>
+          </div>
+        </div>
+      `;
+      }).join('');
+      const collectionLines = collectionEntries.map(([collectionIndex, qty], ci) => {
+        const col = collections[parseInt(collectionIndex)];
+        const lineTotal = col.totalPrice * qty;
+        subtotal += lineTotal;
+        const firstProduct = products[col.productIndices[0]];
+        return `
+        <div class="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-4 py-3 sm:py-4 border-b border-gray-100 cart-line" data-collection="${collectionIndex}">
+          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-gray-50 flex-shrink-0 overflow-hidden relative product-box-shadow"><div class="absolute inset-0 product-img-box">${productImageHtml(col.productIndices[0], col.name)}</div></div>
+          <div class="flex-1 min-w-0">
+            <h4 class="font-semibold text-[#C86A8A] truncate text-sm sm:text-base">${col.name}</h4>
+            <p class="text-xs sm:text-sm text-gray-600">Set · ${formatPrice(col.totalPrice)} × ${qty}</p>
+            <p class="font-medium text-gray-800 text-sm sm:text-base">${formatPrice(lineTotal)}</p>
+          </div>
+          <div class="flex items-center gap-1 w-full sm:w-auto justify-end sm:justify-start">
+            <button type="button" class="cart-qty-minus-collection w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600" data-collection="${collectionIndex}">−</button>
+            <span class="w-6 text-center text-sm">${qty}</span>
+            <button type="button" class="cart-qty-plus-collection w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600" data-collection="${collectionIndex}">+</button>
+            <button type="button" class="cart-remove-collection w-8 h-8 rounded-full hover:bg-red-50 text-red-500 ml-1" data-collection="${collectionIndex}" aria-label="Remove">×</button>
+          </div>
+        </div>
+      `;
+      }).join('');
+      container.innerHTML = hasItems ? productLines + collectionLines : '<p class="text-gray-500 py-8 text-center">Your cart is empty.</p>';
+      document.getElementById('cartSubtotal').textContent = formatPrice(subtotal);
+      document.getElementById('cartTotal').textContent = formatPrice(subtotal);
+      document.getElementById('cartCount').textContent = cart.reduce((s, { qty }) => s + qty, 0);
+      container.querySelectorAll('.cart-qty-minus').forEach(btn => {
+        btn.addEventListener('click', () => updateCartQty(parseInt(btn.dataset.product), -1));
+      });
+      container.querySelectorAll('.cart-qty-plus').forEach(btn => {
+        btn.addEventListener('click', () => updateCartQty(parseInt(btn.dataset.product), 1));
+      });
+      container.querySelectorAll('.cart-remove').forEach(btn => {
+        btn.addEventListener('click', () => removeFromCart(parseInt(btn.dataset.product)));
+      });
+      container.querySelectorAll('.cart-qty-minus-collection').forEach(btn => {
+        btn.addEventListener('click', () => updateCartQtyCollection(parseInt(btn.dataset.collection), -1));
+      });
+      container.querySelectorAll('.cart-qty-plus-collection').forEach(btn => {
+        btn.addEventListener('click', () => updateCartQtyCollection(parseInt(btn.dataset.collection), 1));
+      });
+      container.querySelectorAll('.cart-remove-collection').forEach(btn => {
+        btn.addEventListener('click', () => removeFromCartCollection(parseInt(btn.dataset.collection)));
+      });
+    }
+
+    function addToCart(productIndex) {
+      cart.push({ productIndex, qty: 1 });
+      document.getElementById('cartCount').textContent = cart.reduce((s, { qty }) => s + qty, 0);
+    }
+
+    function addCollectionToCart(collectionIndex) {
+      cart.push({ collectionIndex, qty: 1 });
+      document.getElementById('cartCount').textContent = cart.reduce((s, { qty }) => s + qty, 0);
+    }
+
+    function updateCartQty(productIndex, delta) {
+      const idx = cart.findIndex(x => x.productIndex === productIndex);
+      if (idx === -1) return;
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) cart.splice(idx, 1);
+      renderCart();
+    }
+
+    function updateCartQtyCollection(collectionIndex, delta) {
+      const idx = cart.findIndex(x => x.collectionIndex === collectionIndex);
+      if (idx === -1) return;
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) cart.splice(idx, 1);
+      renderCart();
+    }
+
+    function removeFromCart(productIndex) {
+      cart = cart.filter(x => x.productIndex !== productIndex);
+      renderCart();
+    }
+
+    function removeFromCartCollection(collectionIndex) {
+      cart = cart.filter(x => x.collectionIndex !== collectionIndex);
+      renderCart();
+    }
+
+    function searchProducts(q) {
+      searchQuery = (q || '').trim().toLowerCase();
+      renderProductsGrid(searchQuery || null);
+      const panel = document.getElementById('searchPanel');
+      const results = document.getElementById('searchResults');
+      if (!searchQuery) {
+        results.innerHTML = '';
+        return;
+      }
+      const list = products.filter((p, i) => p.name.toLowerCase().includes(searchQuery) || p.description.toLowerCase().includes(searchQuery));
+      results.innerHTML = list.slice(0, 6).map((p, i) => {
+        const idx = products.indexOf(p);
+        return `<button type="button" class="w-full text-left px-3 py-2 rounded-lg hover:bg-white/50 text-gray-700 search-result" data-product="${idx}">${p.name} — ${p.price}</button>`;
+      }).join('') || '<p class="px-3 py-2 text-gray-500 text-sm">No results.</p>';
+      results.querySelectorAll('.search-result').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.getElementById('searchPanel').classList.remove('open');
+          document.getElementById('searchInput').value = '';
+          results.innerHTML = '';
+          showProductDetail(parseInt(btn.dataset.product));
+        });
+      });
+    }
+
+    renderProductsGrid();
+    updateCarousel();
+    resetAutoSlide();
+
+    (function initCarouselProductImages() {
+      for (let i = 0; i < 5; i++) {
+        const card = document.getElementById('product' + i);
+        if (!card || !products[i]) continue;
+        const imgWrap = card.querySelector('.relative.mb-4.rounded-2xl');
+        if (!imgWrap) continue;
+        imgWrap.innerHTML = '<div class="absolute inset-0 product-img-box">' + productImageHtml(i, products[i].name) + '</div>';
+      }
+    })();
+
+    document.querySelectorAll('[data-screen]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.scroll) showScreen('home', btn.dataset.scroll);
+        else showScreen(btn.dataset.screen);
+      });
+    });
+    document.getElementById('navLogo').addEventListener('click', () => showScreen('home'));
+
+    document.getElementById('prevBtn').addEventListener('click', prevSlide);
+    document.getElementById('nextBtn').addEventListener('click', nextSlide);
+    document.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const index = parseInt(card.dataset.index);
+        if (index !== currentIndex) goToSlide(index);
+        else showProductDetail(index);
+      });
+    });
+
+    document.getElementById('searchToggle').addEventListener('click', () => {
+      document.getElementById('searchPanel').classList.toggle('open');
+      document.getElementById('searchInput').focus();
+    });
+    document.getElementById('searchInput').addEventListener('input', e => searchProducts(e.target.value));
+    document.addEventListener('click', e => {
+      if (!e.target.closest('#searchPanel') && !e.target.closest('#searchToggle')) document.getElementById('searchPanel').classList.remove('open');
+    });
+
+    document.getElementById('cartBtn').addEventListener('click', openCart);
+    document.getElementById('closeCart').addEventListener('click', closeCart);
+    document.getElementById('cartOverlay').addEventListener('click', closeCart);
+
+    (function initMobileNav() {
+      const toggle = document.getElementById('navMenuToggle');
+      const menu = document.getElementById('navMobileMenu');
+      if (!toggle || !menu) return;
+      toggle.addEventListener('click', () => {
+        const isOpen = !menu.classList.contains('hidden');
+        if (isOpen) {
+          menu.classList.add('hidden');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.querySelector('.nav-menu-icon').classList.remove('hidden');
+          toggle.querySelector('.nav-menu-close').classList.add('hidden');
+        } else {
+          menu.classList.remove('hidden');
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.querySelector('.nav-menu-icon').classList.add('hidden');
+          toggle.querySelector('.nav-menu-close').classList.remove('hidden');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
