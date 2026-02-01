@@ -16,61 +16,66 @@
 --------------------------------------------------------------------------------
 2. PRODUCT IMAGES (product-0.png through product-5.png)
 --------------------------------------------------------------------------------
-  These 6 images are used everywhere a product is shown. Use the EXACT filenames:
+  These 6 images are used everywhere a product is shown. Use the EXACT
+  filenames (no leading or trailing spaces):
 
-  product-0.png  →  Rose Elixir Serum
-  product-1.png  →  Green Tea Cream
-  product-2.png  →  Vitamin C Drops
-  product-3.png  →  Lavender Cleanser
-  product-4.png  →  Rose Mist Toner
-  product-5.png  →  Honey Glow Mask
+  product-0.png  →  Whitening cream
+  product-1.png  →  Shampoo & conditioner
+  product-2.png  →  Face cleanser
+  product-3.png  →  Body lotion
+  product-4.png  →  Kojic Acid face cream
+  product-5.png  →  Body oil
 
   Format:   PNG or JPG
-  Size:     Recommended 600×750px or similar (portrait or square). Minimum ~400px
-            on the shorter side for sharp display on all devices.
+  Size:     Recommended 600×750px or similar (portrait or square). Minimum
+            ~400px on the shorter side for sharp display on all devices.
 
   Where each product image appears:
   • Hero slideshow (home page)     — The main rotating carousel at the top.
   • Products grid (home page)      — "Our Products" section cards.
   • Product detail page            — Large image when you click a product.
   • Similar products               — Thumbnails on the product detail page.
-  • Collections screen             — Each set has a swipeable slide; each slide
-                                    shows one product image filling the box.
+  • Collections screen             — Each set has a swipeable slide; each
+                                    slide shows one product image filling
+                                    the box.
   • Cart drawer                    — Small thumbnails next to each line item.
 
-  If a product image file is missing, the site shows a default graphic for that
-  product instead (no broken image).
+  If a product image file is missing, the site may show a blank or fallback
+  area (no broken image icon).
 
 
 --------------------------------------------------------------------------------
 3. HERO SLIDESHOW / CAROUSEL (home page)
 --------------------------------------------------------------------------------
-  What it is:  The rotating showcase at the top of the home page with 5 product
-               cards (Rose Elixir, Green Tea Cream, Vitamin C Drops, Lavender
-               Cleanser, Rose Mist Toner). Cards slide left/right; one is
-               centered, others are slightly behind.
+  What it is:  The rotating showcase at the top of the home page with 5
+               product cards (Whitening cream, Shampoo & conditioner, Face
+               cleanser, Body lotion, Kojic Acid face cream). Cards slide
+               left/right; one is centered, others are slightly behind.
 
   Images used: product-0.png, product-1.png, product-2.png, product-3.png,
                product-4.png  (one image per card, in that order)
 
-  How to update:  Replace product-0.png … product-4.png in this folder. Refresh
-  the page (hard refresh: Ctrl+Shift+R or Cmd+Shift+R if needed). No code
-  changes required.
+  How to update:  Replace product-0.png … product-4.png in this folder.
+  Refresh the page (hard refresh: Ctrl+Shift+R or Cmd+Shift+R if needed).
+  No code changes required.
 
 
 --------------------------------------------------------------------------------
 4. COLLECTIONS SLIDESHOW (Collections page)
 --------------------------------------------------------------------------------
   What it is:  On the Collections page, each "set" (e.g. Starter Set, Glow
-               Routine) has its own horizontal slide. You swipe or drag to see
-               each product in the set. Each slide is one product image in a
-               fixed 4:3 box.
+               Routine, Complete Collection) has its own horizontal slide.
+               You swipe or drag to see each product in the set. Each slide
+               is one product image in a square box. Auto-slides slowly;
+               slideshow pauses when the Details panel is open.
 
   Images used:  Same product images (product-0.png … product-5.png). Which
                 image appears on which slide is determined by the set:
-  • Starter Set:          product-3, product-4, product-0 (3 slides)
-  • Glow Routine:          product-0, product-2, product-1 (3 slides)
-  • Complete Collection:  product-0 … product-5 (6 slides)
+  • Starter Set:          product-3, product-4, product-0 (Body lotion,
+                          Kojic Acid face cream, Whitening cream)
+  • Glow Routine:         product-0, product-2, product-1 (Whitening cream,
+                          Face cleanser, Shampoo & conditioner)
+  • Complete Collection:  product-0 … product-5 (all 6 products)
 
   Display:  Each slide image is set to COVER the box (fills the frame; may
   crop edges). Use clear, well-centered product photos for best results.
@@ -89,18 +94,19 @@
     product-4.png
     product-5.png
 
-  No spaces in filenames. Use lowercase. Format: .png or .jpg for products.
+  • No spaces in filenames (avoid " product-0.png" with a leading space).
+  • Use lowercase. Format: .png or .jpg for products.
 
 
 --------------------------------------------------------------------------------
 6. TROUBLESHOOTING
 --------------------------------------------------------------------------------
-  • Images don’t show / I still see default icons
+  • Images don’t show / I still see default icons or empty boxes
     — Use a local server to open the site (e.g. Live Server in VS Code, or
       run: python3 -m http.server 8000 in the project folder, then open
       http://localhost:8000). Opening index.html as file:// can block images.
-    — Check filenames: exactly product-0.png, product-1.png, … (no space, no
-      capital P).
+    — Check filenames: exactly product-0.png, product-1.png, … (no leading
+      or trailing space, no capital P).
     — Hard refresh: Ctrl+Shift+R (Windows/Linux) or Cmd+Shift+R (Mac).
 
   • Collection slide image is cropped or looks wrong
